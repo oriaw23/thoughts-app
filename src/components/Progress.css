@@ -1,0 +1,299 @@
+.progress-view {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg-2);
+  direction: rtl;
+  padding: 28px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.progress-view__header { flex-shrink: 0; }
+.progress-view__title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+.progress-view__subtitle { font-size: 14px; color: var(--text-3); margin-top: 3px; }
+
+/* Hero stats */
+.progress-view__hero {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.pstat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.pstat:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.pstat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+}
+.pstat--streak::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+.pstat--done::before { background: linear-gradient(90deg, #10b981, #6366f1); }
+.pstat--rate::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+.pstat--goals::before { background: linear-gradient(90deg, #3b82f6, #ec4899); }
+
+.pstat__icon { font-size: 24px; margin-bottom: 4px; }
+.pstat__val { font-size: 36px; font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -1px; }
+.pstat__label { font-size: 12px; color: var(--text-3); font-weight: 500; }
+
+.pstat__badge {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.pstat__mini-bar {
+  margin-top: 6px;
+  height: 5px;
+  background: var(--bg-3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.pstat__mini-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* Grid */
+.progress-view__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* Card */
+.pcard {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+.pcard--wide { grid-column: span 2; }
+
+.pcard__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.pcard__empty {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* Weekly bar chart */
+.pcard__week-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 110px;
+}
+
+.pcard__bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.pcard__bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.pcard__bar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.4s ease;
+  opacity: 0.7;
+}
+.pcard__bar.today { opacity: 1; background: linear-gradient(to top, #6366f1, #8b5cf6); }
+
+.pcard__bar-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  min-height: 14px;
+}
+
+.pcard__bar-label {
+  font-size: 10px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* Category breakdown */
+.pcard__categories { display: flex; flex-direction: column; gap: 10px; }
+
+.pcard__cat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pcard__cat-icon { font-size: 16px; flex-shrink: 0; }
+.pcard__cat-label { font-size: 12.5px; color: var(--text-2); font-weight: 500; min-width: 60px; }
+
+.pcard__cat-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pcard__cat-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+.pcard__cat-pct {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: left;
+}
+
+/* Goals progress */
+.pcard__goals { display: flex; flex-direction: column; gap: 12px; }
+
+.pcard__goal-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pcard__goal-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+}
+
+.pcard__goal-cat { font-size: 18px; }
+
+.pcard__goal-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.pcard__goal-meta { font-size: 11px; color: var(--text-3); }
+
+.pcard__goal-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pcard__goal-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+.pcard__goal-pct {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: left;
+}
+
+/* Heatmap */
+.pcard__heatmap {
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.pcard__heat-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  transition: transform 0.1s;
+  cursor: default;
+}
+.pcard__heat-cell:hover { transform: scale(1.4); z-index: 1; position: relative; }
+
+.pcard__heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-start;
+}
+
+.pcard__legend-label { font-size: 10px; color: var(--text-3); }
+.pcard__legend-cell { width: 14px; height: 14px; border-radius: 3px; }
+
+/* Hall of Fame */
+.pcard__records {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pcard__record {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-2);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+}
+
+.pcard__record-icon { font-size: 24px; }
+
+.pcard__record-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.pcard__record-label { font-size: 11px; color: var(--text-3); margin-top: 2px; }

@@ -1,0 +1,24 @@
+.trash{flex:1;overflow-y:auto;background:var(--bg-2);direction:rtl;padding:28px 36px 60px;display:flex;flex-direction:column;gap:20px}
+.trash__head{display:flex;align-items:flex-start;justify-content:space-between}
+.trash__title{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.trash__sub{font-size:13px;color:var(--text-3);margin-top:4px}
+.trash__clear-btn{padding:9px 18px;background:var(--bg-2);color:#ef4444;border:1.5px solid #fca5a5;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s}
+.trash__clear-btn:hover{background:#fee2e2}
+.trash__del-btn{padding:9px 18px;background:#ef4444;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .14s}
+.trash__del-btn:hover{opacity:.88}
+.trash__empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#b0b0b0;padding:80px 0}
+.trash__empty span{font-size:58px}
+.trash__empty h3{font-size:20px;font-weight:600;color:#555}
+.trash__empty p{font-size:14px}
+.trash__list{display:flex;flex-direction:column;gap:6px}
+.trash__item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .13s}
+.trash__item:hover{border-color:var(--border-2)}
+.trash__item.selected{background:#fef2f2;border-color:#fca5a5}
+.trash__item-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border-2);background:var(--bg-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.trash__item.selected .trash__item-check{background:#ef4444;border-color:#ef4444}
+.trash__item-icon{font-size:20px;flex-shrink:0}
+.trash__item-body{flex:1;display:flex;flex-direction:column;gap:3px}
+.trash__item-name{font-size:14px;font-weight:500;color:var(--text)}
+.trash__item-meta{font-size:12px;color:var(--text-3)}
+.trash__item-del{padding:5px 12px;background:var(--bg-2);color:#ef4444;border:1px solid #fca5a5;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:background .1s;flex-shrink:0}
+.trash__item-del:hover{background:#fee2e2}

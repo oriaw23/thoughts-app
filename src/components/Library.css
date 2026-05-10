@@ -1,0 +1,33 @@
+.lib{flex:1;overflow-y:auto;background:var(--bg-2);direction:rtl;padding:28px 36px 60px;display:flex;flex-direction:column;gap:20px}
+.lib__title{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.lib__sub{font-size:13px;color:var(--text-3);margin-top:4px}
+.lib__tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);flex-shrink:0}
+.lib__tab{padding:10px 18px;border:none;border-bottom:2px solid transparent;background:none;font-size:13.5px;font-weight:500;color:var(--text-2);cursor:pointer;font-family:inherit;transition:color .14s}
+.lib__tab:hover{color:var(--text)}
+.lib__tab.active{font-weight:700;color:#6366f1;border-bottom-color:#6366f1}
+.lib__filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.lib__search{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;flex:1;min-width:180px}
+.lib__search svg{color:#94a3b8;flex-shrink:0}
+.lib__search input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;direction:rtl;background:transparent;color:var(--text)}
+.lib__cats{display:flex;gap:6px;flex-wrap:wrap}
+.lib__cat{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12.5px;cursor:pointer;font-family:inherit;transition:all .13s;color:var(--text-2)}
+.lib__cat:hover{border-color:#6366f1;color:#6366f1}
+.lib__cat.active{background:#6366f1;color:#fff;border-color:#6366f1}
+.lib__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.lib__card{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s,transform .12s}
+.lib__card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.lib__card-icon{font-size:32px}
+.lib__card-name{font-size:15px;font-weight:700;color:var(--text);margin:0}
+.lib__card-desc{font-size:12.5px;color:var(--text-2);line-height:1.55;margin:0;flex:1}
+.lib__use-btn{padding:7px 14px;background:#6366f1;color:#fff;border-radius:9px;border:none;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .14s;margin-top:auto}
+.lib__use-btn:hover{opacity:.88}
+.lib__list{display:flex;flex-direction:column;gap:6px}
+.lib__saved-item{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px}
+.lib__saved-item:hover{box-shadow:var(--shadow-sm)}
+.lib__saved-icon{font-size:18px;flex-shrink:0}
+.lib__saved-title{flex:1;font-size:14px;font-weight:500;color:var(--text)}
+.lib__saved-date{font-size:11.5px;color:var(--text-3);flex-shrink:0}
+.lib__saved-del,.lib__bookmark-btn{background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-3);padding:3px 6px;border-radius:5px;transition:background .1s,color .1s;flex-shrink:0}
+.lib__saved-del:hover{background:#fee2e2;color:#ef4444}
+.lib__empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:60px;color:#b0b0b0}
+.lib__empty span{font-size:48px}

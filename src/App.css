@@ -1,0 +1,148 @@
+.app {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.app__main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* 56px for the collapsed icon strip */
+  margin-left: 56px;
+  width: calc(100% - 56px);
+}
+
+/* Thin trigger strip — visible on left edge when sidebar is closed */
+.app__sidebar-trigger {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  z-index: 300;
+  cursor: pointer;
+  background: linear-gradient(to right, rgba(99,102,241,0.35), transparent);
+  transition: opacity 0.2s;
+}
+.app__sidebar-trigger:hover {
+  background: linear-gradient(to right, rgba(99,102,241,0.6), transparent);
+}
+
+/* Backdrop when sidebar is open */
+.app__sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 198;
+  background: rgba(0, 0, 0, 0);
+  /* Transparent — just catches clicks to close */
+}
+
+/* ── View wrapper + themes ──────────────────────────────────────────────── */
+.view-wrap {
+  flex: 1; display: flex;
+  position: relative; transition: background .4s ease;
+  min-height: 0;
+}
+
+/* Make the direct view child transparent so the theme shows through */
+.view-wrap[class*="theme-"] > * { background: transparent !important; }
+
+/* ── Nature 🌄 ── */
+.theme-nature {
+  background:
+    radial-gradient(ellipse 280px 110px at 22% 14%, rgba(255,255,255,.80) 0%, transparent 70%),
+    radial-gradient(ellipse 200px 80px  at 68% 10%, rgba(255,255,255,.70) 0%, transparent 70%),
+    radial-gradient(ellipse 160px 65px  at 82% 20%, rgba(255,255,255,.60) 0%, transparent 70%),
+    linear-gradient(180deg, #6ab8e8 0%, #a8d8f0 18%, #c5e8b8 50%, #7dc870 76%, #4e9c42 100%);
+}
+
+/* ── Ocean 🌊 ── */
+.theme-ocean {
+  background: linear-gradient(155deg, #081830 0%, #0e3a70 35%, #1260b0 65%, #0899be 100%);
+}
+
+/* ── Sunset 🌅 ── */
+.theme-sunset {
+  background: linear-gradient(155deg, #120828 0%, #5e0f58 22%, #c43c20 52%, #f0882a 75%, #ffd060 100%);
+}
+
+/* ── Night Sky 🌙 ── */
+.theme-night {
+  background:
+    radial-gradient(ellipse 3px 3px at 15% 18%, rgba(255,255,255,.9) 0%, transparent 100%),
+    radial-gradient(ellipse 2px 2px at 38% 8%,  rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(ellipse 3px 3px at 62% 25%, rgba(255,255,255,.9) 0%, transparent 100%),
+    radial-gradient(ellipse 2px 2px at 80% 12%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(ellipse 2px 2px at 5%  42%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(ellipse 3px 3px at 92% 35%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(ellipse 2px 2px at 50% 55%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(ellipse 3px 3px at 28% 70%, rgba(255,255,255,.7) 0%, transparent 100%),
+    linear-gradient(180deg, #040820 0%, #0b1540 40%, #120c32 70%, #1a0828 100%);
+}
+
+/* ── Gaming 🎮 ── */
+.theme-gaming {
+  background-color: #060618;
+  background-image:
+    linear-gradient(rgba(0,255,180,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,180,.055) 1px, transparent 1px),
+    linear-gradient(rgba(150,0,255,.030) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150,0,255,.030) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+}
+
+/* ── Paper 📜 ── */
+.theme-paper {
+  background: #f4ede0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(120,100,60,.08) 28px),
+    repeating-linear-gradient(90deg, transparent, transparent 27px, rgba(120,100,60,.04) 28px);
+}
+
+/* Cards within dark themes get glass-card effect */
+.theme-night .gp__card,  .theme-night .gp__pcard,  .theme-night .gp__stat,
+.theme-gaming .gp__card, .theme-gaming .gp__pcard, .theme-gaming .gp__stat {
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  backdrop-filter: blur(12px);
+}
+.theme-night .gp__card-title, .theme-night .gp__pcard-h, .theme-night .gp__stat-val,
+.theme-night .gp__section-title,
+.theme-gaming .gp__card-title, .theme-gaming .gp__pcard-h, .theme-gaming .gp__stat-val,
+.theme-gaming .gp__section-title { color: #e8f0ff !important; }
+.theme-night .gp__card-meta, .theme-night .gp__stat-lbl, .theme-night .gp__pcard-empty,
+.theme-gaming .gp__card-meta, .theme-gaming .gp__stat-lbl, .theme-gaming .gp__pcard-empty { color: rgba(200,210,255,.6) !important; }
+
+/* Tasks dark theme */
+.theme-night .task-board__col, .theme-gaming .task-board__col { background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.1) !important; }
+.theme-night .task-card, .theme-gaming .task-card { background: rgba(255,255,255,.08) !important; border-color: rgba(255,255,255,.12) !important; backdrop-filter: blur(10px); }
+
+/* Global sticky notes toggle tab */
+.app__notes-tab {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 601;
+  width: 32px;
+  height: 56px;
+  background: #fef9c3;
+  border: 1.5px solid #e5d88a;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  transition: width 0.15s, background 0.15s;
+}
+.app__notes-tab:hover {
+  width: 38px;
+  background: #fef08a;
+}

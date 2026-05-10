@@ -1,0 +1,249 @@
+/* ── Panel — slides from RIGHT, white style matching topics panel ─────────────── */
+.csp {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 260px;
+  background: #ffffff;
+  border-left: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: row-reverse; /* handle on left side of panel */
+  transform: translateX(100%);
+  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1),
+              box-shadow 0.34s ease;
+  z-index: 148;
+  will-change: transform;
+}
+
+.csp--open {
+  transform: translateX(0);
+  box-shadow: -4px 0 32px rgba(0,0,0,0.12);
+}
+
+/* ── Body ── */
+.csp__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Tabs ── */
+.csp__tabs {
+  display: flex;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  padding: 10px 10px 0;
+  gap: 4px;
+  direction: rtl;
+}
+
+.csp__tab {
+  flex: 1;
+  padding: 8px 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  border-radius: 8px 8px 0 0;
+  transition: color 0.15s, background 0.15s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+.csp__tab:hover { color: #64748b; }
+.csp__tab.active {
+  color: #0f172a;
+  background: #f8fafc;
+  border-bottom: 2px solid #6366f1;
+}
+
+/* ── Shapes grid ── */
+.csp__shapes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px 10px;
+  overflow-y: auto;
+  direction: rtl;
+}
+
+.csp__shape-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 8px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.14s;
+  font-family: inherit;
+}
+.csp__shape-btn:hover {
+  background: #eef2ff;
+  border-color: #6366f1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.14);
+}
+.csp__shape-btn:active { transform: translateY(0) scale(0.97); }
+
+.csp__shape-preview {
+  width: 56px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.csp__shape-preview svg { width: 100%; height: 100%; }
+
+.csp__shape-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* ── Templates list ── */
+.csp__templates {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 10px;
+  overflow-y: auto;
+  direction: rtl;
+}
+
+.csp__tmpl-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: #fafafa;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: right;
+  direction: rtl;
+  font-family: inherit;
+}
+.csp__tmpl-btn:hover {
+  background: #f8faff;
+  border-color: #c7d2fe;
+  transform: translateX(-2px);
+  box-shadow: 0 2px 10px rgba(99,102,241,0.08);
+}
+
+.csp__tmpl-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.csp__tmpl-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.csp__tmpl-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.csp__tmpl-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Media tab ── */
+.csp__media { padding: 8px 4px; display: flex; flex-direction: column; gap: 4px; }
+.csp__media-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 24px 12px; text-align: center; color: #94a3b8;
+}
+.csp__media-empty span { font-size: 28px; }
+.csp__media-empty p { font-size: 13px; font-weight: 600; color: #64748b; margin: 0; }
+.csp__media-empty small { font-size: 11.5px; line-height: 1.4; }
+.csp__media-sec {
+  font-size: 10.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase;
+  letter-spacing: .5px; padding: 6px 8px 3px;
+}
+.csp__media-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 8px; border-radius: 8px; border: none; background: none;
+  cursor: pointer; font-family: inherit; text-align: left; width: 100%;
+  transition: background .12s;
+}
+.csp__media-item:hover { background: #f1f5f9; }
+.csp__media-icon { font-size: 16px; flex-shrink: 0; }
+.csp__media-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.csp__media-name { font-size: 12.5px; font-weight: 600; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.csp__media-cat  { font-size: 10.5px; color: #94a3b8; }
+.csp__media-thumb {
+  width: 36px; height: 28px; object-fit: cover; border-radius: 5px;
+  flex-shrink: 0; border: 1px solid #e2e8f0;
+}
+
+/* Sticky notes shortcut button */
+.csp__notes-btn {
+  grid-column: 1 / -1; /* full width */
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px; border-radius: 10px; border: 1.5px dashed #e2e8f0;
+  background: #fffdf0; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 600; color: #64748b;
+  transition: all .14s; margin-top: 4px;
+}
+.csp__notes-btn:hover { border-color: #fbbf24; background: #fef9c3; color: #92400e; }
+
+/* ── Handle — sticks out to the LEFT when panel is at right:0 ── */
+.csp__handle {
+  position: absolute;
+  right: 100%;      /* left edge of the panel */
+  top: 180px;
+  width: 22px;
+  height: 54px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: -3px 0 12px rgba(0,0,0,0.08);
+  transition: width 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  z-index: 5;
+  color: #64748b;
+}
+.csp__handle:hover {
+  width: 28px;
+  box-shadow: -4px 0 18px rgba(0,0,0,0.12);
+  color: #475569;
+}
+
+/* Accent bar on top */
+.csp__handle::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 2px 0 0 0;
+}

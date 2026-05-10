@@ -1,0 +1,256 @@
+/* ═══════════════════════════════════════════════════════
+   THOUGHTS — Mobile & Responsive Styles
+   Breakpoints: mobile < 768px | tablet < 1024px
+═══════════════════════════════════════════════════════ */
+
+/* ── Mobile: hide desktop sidebar, no left margin ── */
+@media (max-width: 767px) {
+  .sb              { display: none !important; }
+  .app__sidebar-backdrop { display: none !important; }
+
+  .app__main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding-bottom: 68px; /* room for bottom nav */
+  }
+
+  /* Prevent horizontal scroll globally */
+  body { overflow-x: hidden; }
+}
+
+/* ══ Bottom mobile nav ════════════════════════════════ */
+.mob-nav {
+  display: none;
+}
+@media (max-width: 767px) {
+  .mob-nav {
+    display: flex;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: #ffffff;
+    border-top: 1px solid #e8ecf2;
+    align-items: stretch;
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -4px 20px rgba(0,0,0,.06);
+  }
+}
+
+.mob-nav__item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  border: none; background: none; cursor: pointer;
+  font-family: inherit; padding: 6px 2px; min-width: 0;
+  transition: background .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-nav__item:active { background: #f4f6f9; }
+.mob-nav__icon {
+  width: 22px; height: 22px; color: #9ca3b0;
+  display: flex; align-items: center; justify-content: center;
+  transition: color .14s;
+}
+.mob-nav__icon svg { width: 22px; height: 22px; }
+.mob-nav__label {
+  font-size: 10px; font-weight: 500; color: #9ca3b0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%; transition: color .14s;
+}
+.mob-nav__item.active .mob-nav__icon { color: #0f172a; }
+.mob-nav__item.active .mob-nav__label { color: #0f172a; font-weight: 700; }
+.mob-nav__badge {
+  position: absolute; top: 4px; right: calc(50% - 18px);
+  min-width: 16px; height: 16px; padding: 0 4px;
+  background: #ef4444; color: #fff; border-radius: 8px;
+  font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+}
+
+/* ══ More bottom sheet ════════════════════════════════ */
+.mob-more-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  z-index: 999; backdrop-filter: blur(2px);
+  animation: mob-fade-in .18s ease;
+}
+@keyframes mob-fade-in { from{opacity:0} to{opacity:1} }
+
+.mob-more-sheet {
+  position: absolute; bottom: 60px; left: 0; right: 0;
+  background: #fff; border-radius: 20px 20px 0 0;
+  padding: 16px 0 8px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,.16);
+  animation: mob-slide-up .22s cubic-bezier(.4,0,.2,1);
+}
+@keyframes mob-slide-up { from{transform:translateY(100%)} to{transform:none} }
+
+.mob-more-handle {
+  width: 36px; height: 4px; background: #e2e8f0; border-radius: 2px;
+  margin: 0 auto 14px; display: block;
+}
+.mob-more-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 0;
+  padding: 0 8px;
+}
+.mob-more-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 8px; border: none; background: none; cursor: pointer;
+  font-family: inherit; border-radius: 12px; transition: background .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-more-item:active { background: #f4f6f9; }
+.mob-more-item svg { width: 24px; height: 24px; color: #334155; }
+.mob-more-item span { font-size: 11px; font-weight: 600; color: #334155; }
+.mob-more-settings {
+  display: flex; align-items: center; gap: 10px;
+  width: calc(100% - 32px); margin: 8px 16px 0;
+  padding: 14px 16px; border: none; background: #f8fafc;
+  border-radius: 12px; cursor: pointer; font-family: inherit;
+  font-size: 14px; font-weight: 600; color: #334155;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ══ Global responsive component fixes ════════════════ */
+
+/* ── Goals & Progress ── */
+@media (max-width: 767px) {
+  .gp { padding: 16px 16px 32px; gap: 16px; }
+  .gp__header { flex-wrap: wrap; gap: 10px; }
+  .gp__title  { font-size: 22px; }
+  .gp__stats  { grid-template-columns: repeat(2,1fr); gap: 10px; }
+  .gp__stat-val { font-size: 28px; }
+  .gp__charts { grid-template-columns: 1fr; }
+  .gp__pcard--wide { grid-column: span 1; }
+  .gp__grid   { grid-template-columns: 1fr; }
+  .gp__form-cols { grid-template-columns: 1fr; }
+  .gp__records { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* Goal detail */
+  .gpd__body { grid-template-columns: 1fr; padding: 16px; gap: 20px; }
+  .gpd__head { padding: 16px; }
+  .gpd__title { font-size: 20px; }
+  .gpd__hero { flex-wrap: wrap; gap: 12px; }
+  .gpd__hero-right { flex-direction: row; gap: 12px; }
+  .gpd__tab-bar { padding: 0 16px; }
+}
+
+/* ── Projects ── */
+@media (max-width: 767px) {
+  .pp { padding: 16px 16px 32px; gap: 16px; }
+  .pp-grid { grid-template-columns: 1fr; gap: 12px; }
+  .phub__head { padding: 16px; }
+  .phub__hero { flex-wrap: wrap; gap: 12px; }
+  .phub__hero-right { flex-direction: row; gap: 10px; align-self: flex-start; }
+  .phub__body { grid-template-columns: 1fr; padding: 16px; gap: 20px; }
+  .phub__pages-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Tasks ── */
+@media (max-width: 767px) {
+  .tasks { padding: 16px; }
+  .tasks__board { display: flex; flex-direction: column; gap: 16px; }
+  .task-board__col { min-width: unset !important; width: 100%; }
+}
+
+/* ── Calendar ── */
+@media (max-width: 767px) {
+  .cal-week-grid { min-width: 600px; }
+  .cal-wrap { overflow-x: auto; }
+  .cal-head { flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+}
+
+/* ── Pages ── */
+@media (max-width: 767px) {
+  /* On mobile, panel is always hidden by default */
+  .pg__panel-wrap { width: 100% !important; box-shadow: none; }
+  .pg__panel { width: 100%; }
+
+  .pg__topbar { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+  .pg__topbar-crumb { font-size: 13px; }
+  .pg__writing-inner { padding: 16px; }
+  .pg__title { font-size: 24px; }
+
+  /* Tab bar scroll */
+  .pg__tabbar { padding: 4px 6px 0; }
+  .pg__tab-title { max-width: 100px; }
+  .pg__tabs-scroll { max-width: calc(100vw - 80px); }
+
+  /* Block editor */
+  .pg__float-toolbar { max-width: 96vw; }
+  .pg__toolbar-toggle { font-size: 12.5px; padding: 7px 14px; }
+}
+
+/* ── GoalDetail ── */
+@media (max-width: 767px) {
+  .gpd { overflow-y: auto; }
+  .gpd__journey { min-width: 0; }
+}
+
+/* ── Modals & overlays → full-screen on mobile ── */
+@media (max-width: 767px) {
+  .settings-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  .pd-overlay { align-items: flex-end; }
+  .pd {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92dvh !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+
+  .em-overlay { align-items: flex-end; }
+  .em {
+    width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+
+  /* Goal hub */
+  .gpd__body > .gpj { max-width: 100%; }
+}
+
+/* ── Forms & inputs — bigger tap targets ── */
+@media (max-width: 767px) {
+  input, textarea, select, button { touch-action: manipulation; }
+
+  .gp__wg-input { font-size: 16px; } /* prevent iOS zoom on focus */
+  .gp__form-title-input { font-size: 16px; }
+  .gp__ms-input { font-size: 16px; }
+  .block-ta { font-size: 16px; } /* prevent iOS zoom */
+
+  /* Bigger action buttons */
+  .gp__new-btn, .pp-new { padding: 11px 20px; }
+}
+
+/* ── Marketplace ── */
+@media (max-width: 767px) {
+  .mkt__hero { padding: 32px 20px 28px; }
+  .mkt__hero-title { font-size: 28px; }
+  .mkt__cats-wrap { padding: 14px 16px; }
+  .mkt__section { padding: 16px 16px; }
+  .mkt__featured-row { grid-template-columns: 1fr; }
+  .mkt__grid { grid-template-columns: 1fr; }
+}
+
+/* ── Canvas ── */
+@media (max-width: 767px) {
+  .cv-tabs { padding: 4px 6px; }
+  .cv-zoom { bottom: 76px; } /* above mobile nav */
+  .cv-bg-toggle { bottom: 76px; }
+  .cv-toolbar { bottom: 76px; }
+  .csp { bottom: 68px; } /* above mobile nav */
+}
+
+/* ── Tablet adjustments (768–1024) ── */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .gp__stats { grid-template-columns: repeat(2,1fr); }
+  .gp__charts { grid-template-columns: 1fr; }
+  .gp__grid   { grid-template-columns: repeat(2,1fr); }
+  .pp-grid    { grid-template-columns: repeat(2,1fr); }
+  .phub__body { grid-template-columns: 1fr; }
+}
