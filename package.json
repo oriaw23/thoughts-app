@@ -22,8 +22,11 @@
       "dist/**/*",
       "electron/**/*"
     ],
+    "icon": "public/icon.ico",
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "forceCodeSigning": false,
+      "icon": "public/icon.ico"
     },
     "nsis": {
       "oneClick": true,
@@ -47,6 +50,8 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "jimp": "^1.6.1",
+    "png-to-ico": "^3.0.1",
     "vite": "^8.0.10"
   }
 }

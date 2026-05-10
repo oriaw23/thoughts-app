@@ -12,6 +12,7 @@ function createWindow() {
       contextIsolation: true,
     },
     title: 'Thoughts',
+    icon: path.join(__dirname, '../public/icon.ico'),
     show: false,
   });
 
