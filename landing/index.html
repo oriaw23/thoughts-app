@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thoughts — Your personal workspace</title>
+  <link rel="icon" href="icon.png" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --border: #1f1f1f;
+      --text: #f0f0f0;
+      --muted: #888;
+      --accent: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8,8,8,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-logo img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+
+    .nav-download {
+      background: white;
+      color: black;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .nav-download:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      padding: 160px 40px 100px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, #fff 0%, #888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto 48px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: white;
+      color: black;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: #444; color: white; }
+
+    .download-note {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--bg);
+      padding: 36px;
+      transition: background 0.2s;
+    }
+
+    .feature-card:hover { background: var(--surface); }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* STATS */
+    .stats {
+      padding: 80px 40px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* CTA */
+    .cta {
+      padding: 120px 40px;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+
+    .cta p {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    footer p { font-size: 13px; color: #444; }
+
+    footer a { color: #555; text-decoration: none; font-size: 13px; }
+    footer a:hover { color: white; }
+
+    /* GLOW */
+    .glow {
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow"></div>
+
+  <nav>
+    <div class="nav-logo">
+      <img src="icon.png" alt="Thoughts" />
+      Thoughts
+    </div>
+    <a href="https://github.com/oriaw23/thoughts-app/releases/latest/download/Thoughts%20Setup%200.0.0.exe" class="nav-download">
+      Download for Windows
+    </a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">Free · Windows · v1.0</div>
+    <h1><span>Your workspace,<br />your rules.</span></h1>
+    <p>Thoughts is a personal productivity app for writing, planning, and organizing everything that matters — all in one place.</p>
+    <div class="hero-buttons">
+      <a href="https://github.com/oriaw23/thoughts-app/releases/latest/download/Thoughts%20Setup%200.0.0.exe" class="btn-primary">
+        ↓ Download for Windows
+      </a>
+      <a href="https://github.com/oriaw23/thoughts-app" class="btn-secondary">View on GitHub</a>
+    </div>
+    <p class="download-note">Free forever · No account required</p>
+  </section>
+
+  <section class="features">
+    <p class="section-label">Everything you need</p>
+    <h2 class="section-title">Built for how you actually think</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Pages & Notes</h3>
+        <p>Write freely with a powerful block editor. Headings, lists, tables, callouts — everything you need.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h3>Tasks</h3>
+        <p>Manage your tasks with priorities, due dates, and status tracking. Never miss what matters.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Calendar</h3>
+        <p>Plan your schedule and visualize your events in a clean, intuitive calendar view.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Goals Engine</h3>
+        <p>Set long-term goals, break them into milestones, and track your daily progress.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Canvas</h3>
+        <p>Draw, sketch, and brainstorm on an infinite whiteboard. Bring your ideas to life visually.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Brain Dump</h3>
+        <p>Capture every thought instantly. Let AI organize and categorize your ideas automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Free forever</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Accounts required</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">6+</div>
+      <div class="stat-label">Built-in tools</div>
+    </div>
+  </div>
+
+  <section class="cta">
+    <h2>Start organizing<br />your life today.</h2>
+    <p>Free download. No signup. Just open and start.</p>
+    <a href="https://github.com/oriaw23/thoughts-app/releases/latest/download/Thoughts%20Setup%200.0.0.exe" class="btn-primary" style="display:inline-flex;">
+      ↓ Download Thoughts
+    </a>
+  </section>
+
+  <footer>
+    <p>© 2026 Thoughts App</p>
+    <a href="https://github.com/oriaw23/thoughts-app">GitHub</a>
+  </footer>
+
+</body>
+</html>
