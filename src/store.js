@@ -7,7 +7,7 @@ const STORAGE_KEY = 'mynotion_v3';
 const today = new Date().toISOString().slice(0, 10);
 
 const WELCOME_BLOCKS = JSON.stringify([
-  { id: 'b1', type: 'heading1', text: 'Welcome to Thoughts ✨' },
+  { id: 'b1', type: 'heading1', text: 'Welcome to Foldbase ✨' },
   { id: 'b2', type: 'paragraph', text: 'Your modern workspace for writing, planning, and organizing everything that matters.' },
   { id: 'b3', type: 'divider', text: '' },
   { id: 'b4', type: 'heading3', text: 'Getting started' },
@@ -25,7 +25,7 @@ const defaultData = {
   pages: [
     {
       id: 'welcome',
-      title: 'Welcome to Thoughts',
+      title: 'Welcome to Foldbase',
       icon: '✨',
       content: WELCOME_BLOCKS,
       folderId: null,

@@ -45,8 +45,8 @@ export default function Welcome({ onDone }) {
       <div className="welcome__content">
         {step === 0 && (
           <div className="welcome__hero" key="hero">
-            <div className="welcome__logo">T</div>
-            <h1 className="welcome__title">ברוך הבא ל-Thoughts</h1>
+            <div className="welcome__logo">F</div>
+            <h1 className="welcome__title">ברוך הבא ל-Foldbase</h1>
             <p className="welcome__subtitle">
               סביבת העבודה האישית שלך — לכתיבה, תכנון וארגון של כל מה שחשוב.
             </p>

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import './ChatBot.css';
 
-const SYSTEM = `אתה עוזר אישי חכם בתוך אפליקציית Thoughts.
+const SYSTEM = `אתה עוזר אישי חכם בתוך אפליקציית Foldbase.
 עזור למשתמש עם תכנון, מטרות, משימות, כתיבה וכל שאלה.
 ענה תמיד בעברית, קצר וברור. השתמש ב-Markdown לפורמט יפה.`;
 
@@ -103,7 +103,7 @@ export default function ChatBot() {
             <div className="cb-header__left">
               <div className="cb-header__avatar">AI</div>
               <div>
-                <p className="cb-header__name">עוזר Thoughts</p>
+                <p className="cb-header__name">עוזר Foldbase</p>
                 <p className="cb-header__sub">
                   {apiKey ? <><span className="cb-header__dot" />מחובר · Gemini Flash</> : 'לא מחובר'}
                 </p>

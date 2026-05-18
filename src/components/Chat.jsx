@@ -6,7 +6,7 @@ const KEY_STORE   = 'groq_api_key';
 const GROQ_URL    = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL       = 'llama-3.3-70b-versatile';
 
-const SYSTEM = `אתה עוזר אישי חכם בתוך אפליקציית Thoughts.
+const SYSTEM = `אתה עוזר אישי חכם בתוך אפליקציית Foldbase.
 עזור עם: תכנון יום, מטרות, משימות, כתיבה, פרודוקטיביות וכל שאלה.
 ענה תמיד בעברית. היה ידידותי וברור.
 

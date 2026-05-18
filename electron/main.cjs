@@ -11,7 +11,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    title: 'Thoughts',
+    title: 'Foldbase',
     icon: path.join(__dirname, '../public/icon.ico'),
     autoHideMenuBar: true,
     show: false,

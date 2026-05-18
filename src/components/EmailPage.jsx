@@ -28,7 +28,7 @@ const NAV = [
 ];
 
 const DEMO = [
-  { id:uuidv4(), from:'Thoughts Team', fromEmail:'team@thoughts.app', subject:'Welcome to Thoughts ✨', preview:'We\'re so excited to have you here. Let\'s get you started with your workspace.', body:'Welcome to Thoughts!\n\nWe\'re thrilled to have you on board.\n\nHere\'s how to get started:\n→ Create your first page\n→ Set up your goals\n→ Explore AI agents\n→ Connect with your team\n\nHappy writing!\n— The Thoughts Team', date:'10:30 AM', folder:'inbox', read:false, starred:true,  tag:'updates' },
+  { id:uuidv4(), from:'Foldbase Team', fromEmail:'team@foldbase.app', subject:'Welcome to Foldbase ✨', preview:'We\'re so excited to have you here. Let\'s get you started with your workspace.', body:'Welcome to Foldbase!\n\nWe\'re thrilled to have you on board.\n\nHere\'s how to get started:\n→ Create your first page\n→ Set up your goals\n→ Explore AI agents\n→ Connect with your team\n\nHappy writing!\n— The Foldbase Team', date:'10:30 AM', folder:'inbox', read:false, starred:true,  tag:'updates' },
   { id:uuidv4(), from:'Sarah Cohen',    fromEmail:'sarah@example.com',  subject:'Q2 Project Update',             preview:'Everything is on track! Design phase complete, development at 60%.', body:'Hi,\n\nJust wanted to share the Q2 update — everything is looking great.\n\n→ Design phase: complete\n→ Development: 60%\n→ QA: starts next week\n\nLet me know if you have any questions!\n\nBest,\nSarah', date:'9:15 AM', folder:'inbox', read:false, starred:false, tag:'work' },
   { id:uuidv4(), from:'David Levy',     fromEmail:'david@company.co',   subject:'Meeting tomorrow at 2pm',       preview:'Just confirming our meeting. Please bring your notes from last week.', body:'Hi,\n\nConfirming our meeting tomorrow at 2:00 PM.\n\nAgenda:\n1. Product roadmap review\n2. Q3 planning\n3. Open discussion\n\nPlease bring your notes from last week.\n\nSee you then!\nDavid', date:'Yesterday', folder:'inbox', read:true,  starred:false, tag:'work' },
   { id:uuidv4(), from:'Weekly Digest',  fromEmail:'news@digest.com',    subject:'🔥 10 productivity tips',        preview:'This week\'s roundup of the best productivity techniques from top creators.', body:'Your weekly digest is here!\n\nTop productivity tips:\n\n1. Time-blocking your calendar\n2. The 2-minute rule\n3. Deep work sessions (90 min)\n4. Weekly reviews every Friday\n5. Single-tasking over multitasking\n\nRead more at our blog.', date:'Mon', folder:'inbox', read:true,  starred:false, tag:'newsletter' },
@@ -82,7 +82,7 @@ export default function EmailPage({ onBack }) {
 
   const sendMail = () => {
     if (!draft.to.trim()||!draft.subject.trim()) return;
-    const e = { id:uuidv4(), from:'Me', fromEmail:'me@thoughts.app', subject:draft.subject, preview:draft.body.slice(0,90), body:draft.body, date:'Just now', folder:'sent', read:true, starred:false, tag:'personal' };
+    const e = { id:uuidv4(), from:'Me', fromEmail:'me@foldbase.app', subject:draft.subject, preview:draft.body.slice(0,90), body:draft.body, date:'Just now', folder:'sent', read:true, starred:false, tag:'personal' };
     const n=[...emails,e]; setEmails(n); save(n);
     setDraft({to:'',subject:'',body:''}); setCompose(false);
   };

@@ -13,8 +13,8 @@
     "electron:build": "vite build && node electron-launcher.cjs --build"
   },
   "build": {
-    "appId": "com.thoughts.app",
-    "productName": "Thoughts",
+    "appId": "com.foldbase.app",
+    "productName": "Foldbase",
     "directories": {
       "output": "release"
     },

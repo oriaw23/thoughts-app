@@ -173,8 +173,8 @@ export default function Sidebar({
 
       {/* App logo (top) */}
       <div className="sb__logo">
-        <div className="sb__logo-mark">T</div>
-        <span className="sb__logo-name">Thoughts</span>
+        <div className="sb__logo-mark">F</div>
+        <span className="sb__logo-name">Foldbase</span>
       </div>
 
       {/* Main nav */}
