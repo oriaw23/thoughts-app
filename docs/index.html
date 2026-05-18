@@ -5,313 +5,348 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Foldbase — Your personal workspace</title>
   <link rel="icon" href="icon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; overflow-x: hidden; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:#080808; color:#fff; overflow-x:hidden; }
+
+    :root {
+      --red:   #ef4444;
+      --yellow:#fbbf24;
+      --green: #22c55e;
+      --blue:  #3b82f6;
+    }
 
     /* ── NAV ── */
     nav {
-      position: fixed; top: 16px; left: 50%;
-      transform: translateX(-50%);
-      z-index: 300; width: calc(100% - 48px); max-width: 900px;
-      padding: 12px 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.3); border-radius: 100px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-      transition: top 0.35s cubic-bezier(0.4,0,0.2,1), background 0.4s, border-color 0.4s, opacity 0.35s;
-      opacity: 0;
+      position:fixed; top:18px; left:50%; transform:translateX(-50%);
+      z-index:300; width:calc(100% - 40px); max-width:880px;
+      padding:12px 20px;
+      display:flex; align-items:center; justify-content:space-between;
+      background:rgba(10,10,10,0.7);
+      backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+      border:1px solid rgba(255,255,255,0.08); border-radius:14px;
+      opacity:0; transition:opacity .4s, top .35s;
     }
-    nav.ready { opacity: 1; }
-    nav.hidden { top: -80px; opacity: 0; }
-    nav.scrolled { background: rgba(255,255,255,0.92); border-color: rgba(0,0,0,0.08); box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
-    nav.scrolled .nav-logo { color: #111; }
-    nav.scrolled .nav-link { color: #555; }
-    nav.scrolled .nav-cta { background: #111; color: #fff; border-color: #111; }
+    nav.ready { opacity:1; }
+    nav.hidden { top:-80px; opacity:0; }
 
-    @keyframes navIn {
-      from { opacity:0; transform:translateX(-50%) translateY(-20px); }
-      to   { opacity:1; transform:translateX(-50%) translateY(0); }
+    .nav-logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
+    .nav-logo img { width:26px; height:26px; border-radius:7px; }
+    .nav-logo span { font-size:15px; font-weight:700; color:#fff; letter-spacing:-.2px; }
+
+    .nav-links { display:flex; align-items:center; gap:6px; }
+    .nav-link { color:rgba(255,255,255,.5); text-decoration:none; font-size:13.5px; font-weight:500; padding:6px 12px; border-radius:8px; transition:all .18s; }
+    .nav-link:hover { color:#fff; background:rgba(255,255,255,.06); }
+
+    .nav-cta {
+      display:flex; align-items:center; gap:7px;
+      padding:8px 18px; border-radius:9px; font-size:13px; font-weight:600;
+      text-decoration:none; color:#000; border:none;
+      background:linear-gradient(135deg,var(--red),var(--yellow),var(--green),var(--blue));
+      background-size:300% 300%; animation:gradShift 5s ease infinite;
+      transition:opacity .2s, transform .2s;
     }
+    .nav-cta:hover { opacity:.88; transform:translateY(-1px); }
 
-    .nav-logo { display:flex; align-items:center; gap:8px; font-family:'Instrument Serif',serif; font-size:18px; color:#fff; text-decoration:none; transition:color 0.4s; }
-    .nav-logo img { width:24px; height:24px; border-radius:6px; }
-    .nav-links { display:flex; align-items:center; gap:24px; }
-    .nav-link { color:rgba(255,255,255,0.85); text-decoration:none; font-size:14px; font-weight:500; transition:color 0.2s; }
-    .nav-link:hover { color:#fff; }
-    .nav-cta { background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); padding:8px 20px; border-radius:100px; font-size:13px; font-weight:600; text-decoration:none; transition:all 0.3s; }
-    .nav-cta:hover { background:rgba(255,255,255,0.35); }
+    @keyframes gradShift {
+      0%   { background-position:0% 50%; }
+      50%  { background-position:100% 50%; }
+      100% { background-position:0% 50%; }
+    }
 
     /* ── HERO ── */
     .hero {
-      position: relative; height: 100vh; min-height: 700px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; overflow: hidden;
+      position:relative; min-height:100vh;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:120px 24px 80px; overflow:hidden;
     }
 
-    .hero-sky {
-      position: absolute; inset: 0;
-      background: linear-gradient(175deg,
-        #1a3a5c 0%, #2d6a9f 8%, #4a90c4 18%,
-        #74b3d8 30%, #a8d0eb 44%, #cce4f2 56%,
-        #e8f4f8 66%, #f5eee4 76%, #f0d9b0 86%, #e8c080 94%, #dfa050 100%
-      );
+    /* Coloured glow orbs */
+    .hero-orbs { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+    .orb {
+      position:absolute; border-radius:50%; filter:blur(80px);
+      animation:orbFloat 8s ease-in-out infinite;
+    }
+    .orb-r { width:420px; height:420px; background:rgba(239,68,68,.22);  top:-80px;  left:-60px;  animation-delay:0s; }
+    .orb-y { width:380px; height:380px; background:rgba(251,191,36,.18); top:-60px;  right:5%;   animation-delay:2s; }
+    .orb-g { width:360px; height:360px; background:rgba(34,197,94,.15);  bottom:10%; left:5%;    animation-delay:4s; }
+    .orb-b { width:400px; height:400px; background:rgba(59,130,246,.18); bottom:0;   right:-40px; animation-delay:1s; }
+
+    @keyframes orbFloat {
+      0%,100% { transform:translateY(0) scale(1); }
+      50%      { transform:translateY(-30px) scale(1.05); }
     }
 
-    .hero-haze {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 100% 40% at 50% 100%, rgba(255,220,160,0.5) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 30% at 20% 60%, rgba(180,210,240,0.3) 0%, transparent 50%);
-      pointer-events: none;
+    /* Noise texture overlay */
+    .hero::before {
+      content:''; position:absolute; inset:0; z-index:1;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      pointer-events:none; opacity:.4;
     }
 
-    /* Fade to white at bottom */
-    .hero-fade {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 35%;
-      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.6) 50%, #ffffff 100%);
-      pointer-events: none; z-index: 5;
-    }
-
-    .hero-sun {
-      position: absolute; width: 150px; height: 150px; border-radius: 50%;
-      bottom: 34%; left: 50%; transform: translateX(-50%);
-      background: radial-gradient(circle, #fffff0 0%, #fff5a0 25%, #ffd860 55%, rgba(255,180,50,0) 75%);
-      box-shadow: 0 0 60px 30px rgba(255,230,100,0.35), 0 0 150px 80px rgba(255,200,80,0.2), 0 0 300px 160px rgba(255,170,50,0.1);
-    }
-
-    .hero-mountains { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; z-index: 2; }
-
-    .hero-content { position: relative; z-index: 10; margin-top: -60px; }
+    .hero-content { position:relative; z-index:10; max-width:760px; }
 
     .hero-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.2); backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.45); color: rgba(255,255,255,0.95);
-      font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px;
-      margin-bottom: 24px; animation: fadeUp 0.8s ease 0.3s both;
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.7); font-size:12.5px; font-weight:500;
+      padding:5px 14px; border-radius:100px; margin-bottom:28px;
+      animation:fadeUp .7s ease .2s both;
     }
-
-    .badge-dot { width:6px; height:6px; background:#4ade80; border-radius:50%; box-shadow:0 0 8px #4ade80; animation:pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+    .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
 
     .hero h1 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(54px, 9vw, 96px); font-weight: 400; line-height: 1.05;
-      color: #fff; text-shadow: 0 2px 30px rgba(0,0,0,0.15);
-      margin-bottom: 18px; animation: fadeUp 0.8s ease 0.4s both; letter-spacing: -1.5px;
+      font-size:clamp(52px,8.5vw,90px); font-weight:900;
+      line-height:1.0; letter-spacing:-3px; margin-bottom:22px;
+      animation:fadeUp .7s ease .3s both;
     }
-    .hero h1 em { font-style: italic; }
+    .hero h1 .word-r { color:var(--red); }
+    .hero h1 .word-y { color:var(--yellow); }
+    .hero h1 .word-g { color:var(--green); }
+    .hero h1 .word-b { color:var(--blue); }
 
     .hero p {
-      font-size: 17px; color: rgba(255,255,255,0.82); max-width: 440px;
-      margin: 0 auto 36px; line-height: 1.65;
-      animation: fadeUp 0.8s ease 0.5s both;
-      text-shadow: 0 1px 10px rgba(0,0,0,0.12);
+      font-size:17px; color:rgba(255,255,255,.55); max-width:420px; margin:0 auto 40px;
+      line-height:1.7; font-weight:400; animation:fadeUp .7s ease .4s both;
     }
 
-    .hero-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(10,10,20,0.85); backdrop-filter: blur(8px); color: #fff;
-      padding: 15px 36px; border-radius: 100px; font-size: 15px; font-weight: 600;
-      text-decoration: none; border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      transition: transform 0.25s, box-shadow 0.25s; animation: fadeUp 0.8s ease 0.6s both;
-    }
-    .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,0,0,0.3); }
+    .hero-btns { display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; animation:fadeUp .7s ease .5s both; }
 
-    .hero-note { display:block; margin-top:14px; font-size:12px; color:rgba(255,255,255,0.5); animation:fadeUp 0.8s ease 0.7s both; }
+    .btn-primary {
+      display:inline-flex; align-items:center; gap:9px;
+      padding:15px 34px; border-radius:12px; font-size:15px; font-weight:700;
+      text-decoration:none; color:#000; border:none; cursor:pointer;
+      background:linear-gradient(135deg,var(--red),var(--yellow),var(--green),var(--blue));
+      background-size:300% 300%; animation:gradShift 5s ease infinite;
+      box-shadow:0 0 40px rgba(251,191,36,.2);
+      transition:transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { transform:translateY(-3px); box-shadow:0 0 60px rgba(251,191,36,.35); }
+
+    .btn-secondary {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:14px 24px; border-radius:12px; font-size:14px; font-weight:600;
+      text-decoration:none; color:rgba(255,255,255,.7);
+      border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04);
+      transition:all .2s;
+    }
+    .btn-secondary:hover { background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.2); }
+
+    .hero-note { display:block; margin-top:18px; font-size:12px; color:rgba(255,255,255,.25); animation:fadeUp .7s ease .6s both; }
+
+    /* Colour bar strip */
+    .color-bar {
+      position:relative; z-index:10; display:flex; gap:0;
+      width:80px; margin:40px auto 0;
+      animation:fadeUp .7s ease .7s both;
+    }
+    .color-bar span {
+      flex:1; height:4px; border-radius:2px;
+      animation:barGrow .8s ease both;
+    }
+    .color-bar span:nth-child(1) { background:var(--red);    animation-delay:.8s; }
+    .color-bar span:nth-child(2) { background:var(--yellow); animation-delay:.9s; }
+    .color-bar span:nth-child(3) { background:var(--green);  animation-delay:1s;  }
+    .color-bar span:nth-child(4) { background:var(--blue);   animation-delay:1.1s;}
+    @keyframes barGrow { from{transform:scaleX(0)}to{transform:scaleX(1)} }
 
     /* ── FEATURES ── */
-    .features {
-      background: #fff; padding: 100px 0 120px;
-      overflow: hidden;
-    }
+    .features { padding:100px 24px 120px; max-width:1100px; margin:0 auto; }
 
-    .features-header {
-      text-align: center; padding: 0 48px; margin-bottom: 64px;
+    .section-label {
+      text-align:center; margin-bottom:60px;
     }
-
-    .tag {
-      display: inline-block; background: #f3f0ff; color: #7c3aed;
-      font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px;
-      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px;
+    .section-tag {
+      display:inline-block; font-size:11px; font-weight:700; letter-spacing:2px;
+      text-transform:uppercase; color:rgba(255,255,255,.3);
+      border:1px solid rgba(255,255,255,.1); padding:5px 14px; border-radius:100px;
+      margin-bottom:16px;
     }
-
     .section-title {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(36px, 5vw, 54px); font-weight: 400;
-      letter-spacing: -1.5px; line-height: 1.1; color: #111;
+      font-size:clamp(32px,5vw,50px); font-weight:800; letter-spacing:-1.5px;
+      line-height:1.1; color:#fff;
     }
-    .section-title em { font-style: italic; color: #7c3aed; }
+    .section-title span { -webkit-text-fill-color:transparent; -webkit-background-clip:text; background-clip:text; }
+    .s-r { background:linear-gradient(90deg,var(--red),var(--yellow)); }
+    .s-b { background:linear-gradient(90deg,var(--blue),var(--green)); }
 
-    /* ── SCROLLING CARDS TRACK ── */
-    .cards-track-wrapper {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      padding: 24px 0 32px;
-    }
-
-    /* Fade edges */
-    .cards-track-wrapper::before,
-    .cards-track-wrapper::after {
-      content: '';
-      position: absolute; top: 0; bottom: 0; width: 120px; z-index: 10;
-      pointer-events: none;
-    }
-    .cards-track-wrapper::before {
-      left: 0;
-      background: linear-gradient(to right, #fff 0%, transparent 100%);
-    }
-    .cards-track-wrapper::after {
-      right: 0;
-      background: linear-gradient(to left, #fff 0%, transparent 100%);
-    }
-
-    .cards-track {
-      display: flex; gap: 24px;
-      width: max-content;
-      animation: scrollLeft 28s linear infinite;
-    }
-
-    .cards-track:hover { animation-play-state: paused; }
-
-    @keyframes scrollLeft {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    .feats-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;
     }
 
     .feat-card {
-      width: 300px; flex-shrink: 0;
-      background: #fff;
-      border: 1.5px solid #f0f0f0;
-      border-radius: 24px;
-      padding: 36px 32px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+      background:#111; border:1px solid rgba(255,255,255,.07);
+      border-radius:18px; padding:32px 28px;
+      transition:border-color .25s, transform .25s, box-shadow .25s;
+      position:relative; overflow:hidden;
     }
+    .feat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      border-radius:18px 18px 0 0;
+    }
+    .feat-card.c-r::before { background:linear-gradient(90deg,var(--red),transparent); }
+    .feat-card.c-y::before { background:linear-gradient(90deg,var(--yellow),transparent); }
+    .feat-card.c-g::before { background:linear-gradient(90deg,var(--green),transparent); }
+    .feat-card.c-b::before { background:linear-gradient(90deg,var(--blue),transparent); }
 
-    .feat-card:hover {
-      border-color: #ddd6fe;
-      box-shadow: 0 12px 40px rgba(124,58,237,0.1);
-      transform: translateY(-6px);
-    }
+    .feat-card:hover { transform:translateY(-5px); border-color:rgba(255,255,255,.14); box-shadow:0 16px 48px rgba(0,0,0,.4); }
 
     .feat-icon {
-      width: 52px; height: 52px;
-      background: linear-gradient(135deg, #f3f0ff, #ede9fe);
-      border-radius: 16px; display: flex; align-items: center; justify-content: center;
-      font-size: 26px; margin-bottom: 20px;
+      width:46px; height:46px; border-radius:13px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px; margin-bottom:18px;
     }
+    .feat-card.c-r .feat-icon { background:rgba(239,68,68,.15); }
+    .feat-card.c-y .feat-icon { background:rgba(251,191,36,.15); }
+    .feat-card.c-g .feat-icon { background:rgba(34,197,94,.15); }
+    .feat-card.c-b .feat-icon { background:rgba(59,130,246,.15); }
 
-    .feat-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: #111; }
-    .feat-card p { font-size: 14px; color: #888; line-height: 1.65; }
+    .feat-card h3 { font-size:16px; font-weight:700; color:#fff; margin-bottom:9px; }
+    .feat-card p  { font-size:13.5px; color:rgba(255,255,255,.4); line-height:1.7; }
 
     /* ── STATS ── */
-    .stats { background: #faf9ff; border-top: 1px solid #f0eeff; border-bottom: 1px solid #f0eeff; padding: 80px 48px; }
-    .stats-inner { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: repeat(3,1fr); text-align: center; gap: 40px; }
-    .stat { opacity:0; transform:translateY(20px); transition:opacity .6s,transform .6s; }
+    .stats { background:#0d0d0d; border-top:1px solid rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.05); padding:80px 24px; }
+    .stats-inner { max-width:720px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); text-align:center; gap:40px; }
+    .stat { opacity:0; transform:translateY(18px); transition:opacity .6s,transform .6s; }
     .stat.visible { opacity:1; transform:translateY(0); }
-    .stat-num { font-family:'Instrument Serif',serif; font-size:60px; color:#7c3aed; line-height:1; margin-bottom:8px; }
-    .stat-label { font-size:14px; color:#999; }
+    .stat-num {
+      font-size:58px; font-weight:900; letter-spacing:-2px; line-height:1; margin-bottom:10px;
+      -webkit-text-fill-color:transparent; -webkit-background-clip:text; background-clip:text;
+    }
+    .stat:nth-child(1) .stat-num { background:linear-gradient(135deg,var(--red),var(--yellow)); }
+    .stat:nth-child(2) .stat-num { background:linear-gradient(135deg,var(--yellow),var(--green)); }
+    .stat:nth-child(3) .stat-num { background:linear-gradient(135deg,var(--green),var(--blue)); }
+    .stat-label { font-size:13px; color:rgba(255,255,255,.3); font-weight:500; }
 
     /* ── CTA ── */
-    .cta { background:#0f0f0f; padding:120px 48px; text-align:center; position:relative; overflow:hidden; }
-    .cta-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:700px; height:350px; background:radial-gradient(ellipse,rgba(124,58,237,0.3) 0%,transparent 70%); pointer-events:none; }
-    .cta h2 { position:relative; font-family:'Instrument Serif',serif; font-size:clamp(40px,6vw,64px); font-weight:400; color:#fff; letter-spacing:-1.5px; line-height:1.05; margin-bottom:18px; opacity:0; transform:translateY(24px); transition:opacity .7s,transform .7s; }
+    .cta { padding:120px 24px; text-align:center; position:relative; overflow:hidden; }
+    .cta-orbs { position:absolute; inset:0; pointer-events:none; }
+    .cta-orbs .orb-r { width:500px; height:500px; top:50%; left:50%; transform:translate(-50%,-50%); background:radial-gradient(ellipse,rgba(239,68,68,.12) 0%,transparent 70%); filter:none; animation:none; }
+    .cta-content { position:relative; z-index:1; }
+    .cta h2 {
+      font-size:clamp(38px,6vw,62px); font-weight:900; letter-spacing:-2px;
+      line-height:1.05; margin-bottom:16px;
+      opacity:0; transform:translateY(24px); transition:opacity .7s,transform .7s;
+    }
     .cta h2.visible { opacity:1; transform:translateY(0); }
-    .cta h2 em { font-style:italic; color:#a78bfa; }
-    .cta p { position:relative; font-size:16px; color:rgba(255,255,255,0.45); margin-bottom:48px; opacity:0; transform:translateY(20px); transition:opacity .7s .15s,transform .7s .15s; }
+    .cta h2 em { font-style:normal; -webkit-text-fill-color:transparent; -webkit-background-clip:text; background-clip:text; background:linear-gradient(135deg,var(--red),var(--yellow),var(--green),var(--blue)); background-size:300% 300%; animation:gradShift 5s ease infinite; }
+    .cta p { font-size:16px; color:rgba(255,255,255,.35); margin-bottom:44px; opacity:0; transform:translateY(18px); transition:opacity .7s .15s,transform .7s .15s; }
     .cta p.visible { opacity:1; transform:translateY(0); }
-    .cta-btn { position:relative; display:inline-flex; align-items:center; gap:8px; background:#fff; color:#111; padding:16px 40px; border-radius:100px; font-size:15px; font-weight:600; text-decoration:none; box-shadow:0 0 40px rgba(124,58,237,0.35); opacity:0; transform:translateY(20px); transition:opacity .7s .3s,transform .7s .3s,box-shadow .25s; }
+    .cta-btn { opacity:0; transform:translateY(18px); transition:opacity .7s .3s,transform .7s .3s; display:inline-flex; }
     .cta-btn.visible { opacity:1; transform:translateY(0); }
-    .cta-btn:hover { transform:translateY(-3px) !important; box-shadow:0 0 60px rgba(124,58,237,0.55); }
 
-    footer { background:#0a0a0a; border-top:1px solid rgba(255,255,255,0.06); padding:28px 48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
-    footer p { font-size:13px; color:rgba(255,255,255,0.25); }
-    footer a { font-size:13px; color:rgba(255,255,255,0.3); text-decoration:none; }
-    footer a:hover { color:rgba(255,255,255,0.7); }
+    /* ── FOOTER ── */
+    footer { background:#060606; border-top:1px solid rgba(255,255,255,.05); padding:26px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+    footer p { font-size:13px; color:rgba(255,255,255,.2); }
+    footer a { font-size:13px; color:rgba(255,255,255,.25); text-decoration:none; transition:color .15s; }
+    footer a:hover { color:rgba(255,255,255,.7); }
 
-    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+    /* ── SCROLLING TRACK ── */
+    .track-wrap { overflow:hidden; padding:20px 0 28px; position:relative; }
+    .track-wrap::before,.track-wrap::after { content:''; position:absolute; top:0; bottom:0; width:100px; z-index:10; pointer-events:none; }
+    .track-wrap::before { left:0; background:linear-gradient(to right,#080808,transparent); }
+    .track-wrap::after  { right:0; background:linear-gradient(to left,#080808,transparent); }
+    .track { display:flex; gap:16px; width:max-content; animation:scrollLeft 30s linear infinite; }
+    .track:hover { animation-play-state:paused; }
+    @keyframes scrollLeft { 0%{transform:translateX(0)}100%{transform:translateX(-50%)} }
 
-    @media (max-width:768px) {
-      nav { width:calc(100% - 24px); padding:10px 16px; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:768px) {
+      nav { width:calc(100% - 24px); }
       .nav-links { display:none; }
-      .hero h1 { font-size:52px; }
-      .features-header { padding:0 20px; }
-      .stats-inner { grid-template-columns:1fr; }
+      .hero h1 { letter-spacing:-1.5px; }
+      .stats-inner { grid-template-columns:1fr; gap:28px; }
       .cta { padding:80px 20px; }
-      footer { padding:24px 20px; }
+      footer { padding:22px 20px; }
     }
   </style>
 </head>
 <body>
 
   <nav id="nav">
-    <a href="#" class="nav-logo"><img src="icon.png" alt="T" /> Foldbase</a>
+    <a href="#" class="nav-logo">
+      <img src="icon.png" alt="Foldbase" />
+      <span>Foldbase</span>
+    </a>
     <div class="nav-links">
       <a href="#features" class="nav-link">Features</a>
       <a href="https://github.com/oriaw23/thoughts-app" class="nav-link">GitHub</a>
     </div>
-    <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.2.0/Foldbase.Setup.0.0.0.exe" class="nav-cta">Download</a>
+    <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.2.0/Foldbase.Setup.0.0.0.exe" class="nav-cta">
+      ⊞ Download
+    </a>
   </nav>
 
+  <!-- ── HERO ── -->
   <section class="hero">
-    <div class="hero-sky"></div>
-    <div class="hero-haze"></div>
-    <div class="hero-sun"></div>
-
-    <svg class="hero-mountains" viewBox="0 0 1440 440" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,360 L80,290 L160,320 L260,240 L380,300 L480,258 L600,295 L700,250 L820,285 L940,248 L1060,278 L1180,252 L1300,272 L1400,255 L1440,262 L1440,440 L0,440 Z" fill="rgba(160,195,235,0.35)"/>
-      <path d="M0,395 L120,310 L210,348 L330,265 L460,325 L560,278 L680,312 L800,255 L920,295 L1040,262 L1160,288 L1280,265 L1380,282 L1440,270 L1440,440 L0,440 Z" fill="rgba(110,155,210,0.5)"/>
-      <path d="M0,440 L0,372 L100,318 L195,355 L295,285 L405,332 L510,288 L625,320 L735,276 L845,312 L955,278 L1065,305 L1175,275 L1285,298 L1385,272 L1440,285 L1440,440 Z" fill="rgba(65,112,175,0.7)"/>
-    </svg>
-
-    <div class="hero-fade"></div>
+    <div class="hero-orbs">
+      <div class="orb orb-r"></div>
+      <div class="orb orb-y"></div>
+      <div class="orb orb-g"></div>
+      <div class="orb orb-b"></div>
+    </div>
 
     <div class="hero-content">
-      <div class="hero-badge"><span class="badge-dot"></span> Free · Windows · v1.0</div>
-      <h1>The workspace<br /><em>built for you.</em></h1>
-      <p>Write, plan, and organize everything that matters — all in one beautiful, free app.</p>
-      <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.2.0/Foldbase.Setup.0.0.0.exe" class="hero-btn">⊞&nbsp; Get for Windows</a>
-      <span class="hero-note">Free forever · No account required</span>
-    </div>
-  </section>
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Free · Windows · v1.2
+      </div>
 
-  <section class="features" id="features">
-    <div class="features-header">
-      <span class="tag">Features</span>
-      <h2 class="section-title">Everything you need,<br /><em>nothing you don't.</em></h2>
-    </div>
+      <h1>
+        Your workspace.<br />
+        <span class="word-r">Write.</span>
+        <span class="word-y">Plan.</span>
+        <span class="word-g">Build.</span>
+        <span class="word-b">Grow.</span>
+      </h1>
 
-    <div class="cards-track-wrapper">
-      <div class="cards-track">
-        <!-- First set -->
-        <div class="feat-card"><div class="feat-icon">📝</div><h3>Pages & Notes</h3><p>Write freely with a powerful block editor. Headings, lists, tables, and more.</p></div>
-        <div class="feat-card"><div class="feat-icon">✅</div><h3>Task Manager</h3><p>Track tasks with priorities, due dates, and status. Never miss what matters.</p></div>
-        <div class="feat-card"><div class="feat-icon">📅</div><h3>Calendar</h3><p>Plan your schedule and visualize events in a clean, intuitive calendar view.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎯</div><h3>Goals Engine</h3><p>Set goals, break them into milestones, and track your daily progress streak.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎨</div><h3>Canvas</h3><p>Draw and brainstorm on an infinite whiteboard. Bring ideas to life visually.</p></div>
-        <div class="feat-card"><div class="feat-icon">🧠</div><h3>Brain Dump</h3><p>Capture every thought instantly. AI organizes and categorizes your ideas.</p></div>
-        <div class="feat-card"><div class="feat-icon">📊</div><h3>Progress Tracking</h3><p>See your streaks, weekly activity and growth over time at a glance.</p></div>
-        <div class="feat-card"><div class="feat-icon">🗂️</div><h3>Projects</h3><p>Organize everything into projects and folders. Keep work and life separate.</p></div>
-        <!-- Duplicate for seamless loop -->
-        <div class="feat-card"><div class="feat-icon">📝</div><h3>Pages & Notes</h3><p>Write freely with a powerful block editor. Headings, lists, tables, and more.</p></div>
-        <div class="feat-card"><div class="feat-icon">✅</div><h3>Task Manager</h3><p>Track tasks with priorities, due dates, and status. Never miss what matters.</p></div>
-        <div class="feat-card"><div class="feat-icon">📅</div><h3>Calendar</h3><p>Plan your schedule and visualize events in a clean, intuitive calendar view.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎯</div><h3>Goals Engine</h3><p>Set goals, break them into milestones, and track your daily progress streak.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎨</div><h3>Canvas</h3><p>Draw and brainstorm on an infinite whiteboard. Bring ideas to life visually.</p></div>
-        <div class="feat-card"><div class="feat-icon">🧠</div><h3>Brain Dump</h3><p>Capture every thought instantly. AI organizes and categorizes your ideas.</p></div>
-        <div class="feat-card"><div class="feat-icon">📊</div><h3>Progress Tracking</h3><p>See your streaks, weekly activity and growth over time at a glance.</p></div>
-        <div class="feat-card"><div class="feat-icon">🗂️</div><h3>Projects</h3><p>Organize everything into projects and folders. Keep work and life separate.</p></div>
+      <p>Everything you need to write, organize, and achieve — in one free, beautiful desktop app.</p>
+
+      <div class="hero-btns">
+        <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.2.0/Foldbase.Setup.0.0.0.exe" class="btn-primary">
+          ⊞&nbsp; Get for Windows
+        </a>
+        <a href="https://github.com/oriaw23/thoughts-app" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
+          View on GitHub
+        </a>
+      </div>
+
+      <span class="hero-note">Free forever · No account required · No data collected</span>
+
+      <div class="color-bar">
+        <span></span><span></span><span></span><span></span>
       </div>
     </div>
   </section>
 
+  <!-- ── FEATURES ── -->
+  <section class="features" id="features">
+    <div class="section-label">
+      <div class="section-tag">Features</div>
+      <h2 class="section-title">
+        <span class="s-r">Powerful tools.</span><br />
+        <span class="s-b">Zero complexity.</span>
+      </h2>
+    </div>
+
+    <div class="feats-grid">
+      <div class="feat-card c-r"><div class="feat-icon">📝</div><h3>Pages & Notes</h3><p>Write freely with a powerful block editor. Headings, lists, tables, code, and more.</p></div>
+      <div class="feat-card c-y"><div class="feat-icon">✅</div><h3>Task Manager</h3><p>Track tasks with priorities, due dates, and statuses. Never miss what matters.</p></div>
+      <div class="feat-card c-g"><div class="feat-icon">📅</div><h3>Calendar</h3><p>Plan your schedule with a live clock. Real-time now-line shows exactly where you are.</p></div>
+      <div class="feat-card c-b"><div class="feat-icon">🎯</div><h3>Goals Engine</h3><p>Set goals, break them into milestones, and track your daily progress and streaks.</p></div>
+      <div class="feat-card c-y"><div class="feat-icon">🎨</div><h3>Canvas</h3><p>Draw and brainstorm on an infinite whiteboard. Bring your ideas to life visually.</p></div>
+      <div class="feat-card c-g"><div class="feat-icon">🗂️</div><h3>Projects</h3><p>Organize everything into projects with goals, tasks, calendar, pages, and canvas.</p></div>
+      <div class="feat-card c-b"><div class="feat-icon">📄</div><h3>Doc Editor</h3><p>Focus mode, writing modes (script, book, academic), formatting panel and more.</p></div>
+      <div class="feat-card c-r"><div class="feat-icon">👥</div><h3>Groups</h3><p>Share pages, whiteboard, and meetings with your team in a shared workspace.</p></div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
   <div class="stats">
     <div class="stats-inner">
       <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Free forever</div></div>
@@ -320,15 +355,22 @@
     </div>
   </div>
 
+  <!-- ── CTA ── -->
   <section class="cta">
-    <div class="cta-glow"></div>
-    <h2>Start organizing<br /><em>your life today.</em></h2>
-    <p>Free download. No signup. Just open and start.</p>
-    <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.2.0/Foldbase.Setup.0.0.0.exe" class="cta-btn">⊞&nbsp; Download Foldbase — Free</a>
+    <div class="cta-orbs"><div class="orb-r"></div></div>
+    <div class="cta-content">
+      <h2>Start organizing<br /><em>your life today.</em></h2>
+      <p>Free download. No signup. Just open and start.</p>
+      <div class="cta-btn">
+        <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.2.0/Foldbase.Setup.0.0.0.exe" class="btn-primary" style="font-size:16px;padding:17px 44px;">
+          ⊞&nbsp; Download Foldbase — Free
+        </a>
+      </div>
+    </div>
   </section>
 
   <footer>
-    <p>© 2026 Foldbase App</p>
+    <p>© 2026 Foldbase</p>
     <a href="https://github.com/oriaw23/thoughts-app">GitHub →</a>
   </footer>
 
@@ -339,25 +381,19 @@
     let lastY = window.scrollY;
     window.addEventListener('scroll', () => {
       const y = window.scrollY;
-      nav.classList.toggle('scrolled', y > window.innerHeight * 0.6);
-      if (y < 80) {
-        nav.classList.remove('hidden');
-      } else if (y > lastY) {
-        nav.classList.add('hidden');
-      } else {
-        nav.classList.remove('hidden');
-      }
+      if (y < 60) nav.classList.remove('hidden');
+      else if (y > lastY) nav.classList.add('hidden');
+      else nav.classList.remove('hidden');
       lastY = y;
     });
 
-    const observer = new IntersectionObserver((entries) => {
+    const io = new IntersectionObserver(entries => {
       entries.forEach((e, i) => {
         if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 100);
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
 
-    document.querySelectorAll('.stat, .cta h2, .cta p, .cta-btn').forEach(el => observer.observe(el));
+    document.querySelectorAll('.stat, .cta h2, .cta p, .cta-btn').forEach(el => io.observe(el));
   </script>
-
 </body>
 </html>
