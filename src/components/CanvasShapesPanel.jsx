@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './CanvasShapesPanel.css';
 
@@ -93,6 +93,10 @@ const TEMPLATES = [
     edges: [[0,'w',1,'e'],[0,'e',2,'w'],[0,'w',3,'e'],[0,'e',4,'w']],
   },
   {
+    id: 'whiteboard', name: 'Whiteboard', icon: '⬜', color: '#64748b', desc: 'Clean empty canvas — start from scratch',
+    nodes: [], edges: [], whiteboard: true,
+  },
+  {
     id: 'retro', name: 'Retrospective', icon: '🔄', color: '#ec4899', desc: 'What worked / didn\'t / to improve',
     nodes: [
       { type: 'rect', x:   0, y:  0, w: 210, h: 50, color: '#d1fae5', text: '✅ What Worked?' },
@@ -113,10 +117,14 @@ const SHAPES_WITH_BIGCARD = [
   ...SHAPES.slice(2),
 ];
 
-export default function CanvasShapesPanel({ onAddNode, onAddTemplate }) {
+export default function CanvasShapesPanel({ onAddNode, onAddTemplate, onWhiteboard }) {
   const [open, setOpen] = useState(false);
   const [tab,  setTab]  = useState('shapes');
   const [media, setMedia] = useState({ links:[], images:[] });
+  const closeTimer = useRef(null);
+
+  const openPanel  = () => { clearTimeout(closeTimer.current); setOpen(true); };
+  const closePanel = () => { closeTimer.current = setTimeout(() => setOpen(false), 320); };
 
   const handleTabChange = (t) => {
     setTab(t);
@@ -124,6 +132,11 @@ export default function CanvasShapesPanel({ onAddNode, onAddTemplate }) {
   };
 
   const handleTemplate = (tmpl) => {
+    if (tmpl.whiteboard) {
+      onWhiteboard?.();
+      setOpen(false);
+      return;
+    }
     const ids   = tmpl.nodes.map(() => uuidv4());
     const nodes = tmpl.nodes.map((n, i) => ({
       ...n, id: ids[i],
@@ -137,7 +150,9 @@ export default function CanvasShapesPanel({ onAddNode, onAddTemplate }) {
   };
 
   return (
-    <div className={`csp ${open ? 'csp--open' : ''}`}>
+    <div className={`csp ${open ? 'csp--open' : ''}`}
+      onMouseEnter={openPanel}
+      onMouseLeave={closePanel}>
       <div className="csp__body">
         {/* Tabs */}
         <div className="csp__tabs">
@@ -149,17 +164,17 @@ export default function CanvasShapesPanel({ onAddNode, onAddTemplate }) {
         {/* Shapes */}
         {tab === 'shapes' && (
           <div className="csp__shapes">
+            {/* Sticky notes shortcut — top of list */}
+            <button className="csp__notes-btn"
+              onClick={() => { window.dispatchEvent(new CustomEvent('toggle-global-notes')); setOpen(false); }}>
+              📌 Open Sticky Notes
+            </button>
             {SHAPES_WITH_BIGCARD.map(s => (
               <button key={s.id} className="csp__shape-btn" onClick={() => { onAddNode(s.id); setOpen(false); }}>
                 <div className="csp__shape-preview">{s.preview}</div>
                 <span className="csp__shape-label">{s.label}</span>
               </button>
             ))}
-            {/* Sticky notes shortcut */}
-            <button className="csp__notes-btn"
-              onClick={() => { window.dispatchEvent(new CustomEvent('toggle-global-notes')); setOpen(false); }}>
-              📌 Open Sticky Notes
-            </button>
           </div>
         )}
 
@@ -227,7 +242,7 @@ export default function CanvasShapesPanel({ onAddNode, onAddTemplate }) {
       </div>
 
       {/* Handle */}
-      <button className="csp__handle" onClick={() => setOpen(p => !p)} title={open ? 'Close' : 'Shapes & Media'}>
+      <button className="csp__handle" onClick={() => setOpen(p => !p)} title={open ? 'Close' : 'Shapes & Templates'}>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
           {open
             ? <polyline points="15 18 9 12 15 6"/>

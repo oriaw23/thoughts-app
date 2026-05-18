@@ -13,6 +13,7 @@ function createWindow() {
     },
     title: 'Thoughts',
     icon: path.join(__dirname, '../public/icon.ico'),
+    autoHideMenuBar: true,
     show: false,
   });
 

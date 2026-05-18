@@ -1,8 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useStore } from './store';
-import { getViewThemes, getThemeClass } from './themes';
+import { getViewThemes, getThemeClass, applyColorMode } from './themes';
+import './darkmode.css';
 import './mobile.css';
 import Chat from './components/Chat';
+import Welcome from './components/Welcome';
 import Pages from './components/Pages';
 import Planning from './components/Planning';
 import DirectMessage from './components/DirectMessage';
@@ -16,9 +18,10 @@ import CanvasView from './components/Canvas';
 import Settings from './components/Settings';
 import GlobalNotes from './components/GlobalNotes';
 import Marketplace from './components/Marketplace';
-import Library from './components/Library';
+import Groups from './components/Groups';
 import Trash from './components/Trash';
 import Help from './components/Help';
+import EmailPage from './components/EmailPage';
 import './App.css';
 
 // ── SVG icons for mobile nav ──────────────────────────────────────────────────
@@ -36,9 +39,9 @@ const MobIcons = {
 
 const MAIN_NAV  = ['pages','tasks','goals','calendar'];
 const MORE_VIEWS = [
-  { id:'projects', label:'Projects' }, { id:'canvas',  label:'Canvas'  },
-  { id:'chat',     label:'Chat'     }, { id:'marketplace', label:'Market' },
-  { id:'library',  label:'Library'  },
+  { id:'projects',    label:'Projects' },
+  { id:'canvas',      label:'Canvas'   },
+  { id:'marketplace', label:'Market'   },
 ];
 
 function MobileNav({ activeView, onViewChange, onOpenSettings, pendingTasks }) {
@@ -88,11 +91,17 @@ function MobileNav({ activeView, onViewChange, onOpenSettings, pendingTasks }) {
   );
 }
 
+const WELCOMED_KEY = 'thoughts_welcomed_v1';
+
 export default function App() {
+  const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem(WELCOMED_KEY));
   const [showSettings, setShowSettings] = useState(false);
   const [sidebarOpen, setSidebarOpen]   = useState(true);
   const [notesOpen, setNotesOpen]       = useState(false);
   const [themeRev, setThemeRev]         = useState(0); // incremented to re-read themes
+
+  // Apply saved color mode on mount
+  useEffect(() => { applyColorMode(); }, []);
 
   // Listen for open-notes event dispatched from Canvas toolbar
   useEffect(() => {
@@ -128,9 +137,13 @@ export default function App() {
     if (activeView.startsWith('dm:')) {
       return <DirectMessage contactId={activeView.slice(3)} events={events} tasks={tasks} goals={goals} />;
     }
+    if (activeView.startsWith('group:')) {
+      const groupId = activeView.slice(6);
+      return <Groups key={groupId} initialGroupId={groupId} />;
+    }
     switch (activeView) {
+      case 'email':       return null;
       case 'marketplace': return <Marketplace />;
-      case 'library':     return <Library pages={pages} />;
       case 'trash':       return <Trash />;
       case 'help':        return <Help />;
       case 'planning': return <Planning />;
@@ -143,48 +156,65 @@ export default function App() {
       case 'progress': return <GoalsEngine goals={goals} tasks={tasks} weeklyGoals={weeklyGoals} onCreateGoal={createGoal} onUpdateGoal={updateGoal} onToggleMilestone={toggleMilestone} onDeleteGoal={deleteGoal} onCreateTask={createTask} onCreateWeeklyGoal={createWeeklyGoal} onToggleWeeklyGoal={toggleWeeklyGoal} onDeleteWeeklyGoal={deleteWeeklyGoal} onAddJournalEntry={addJournalEntry} onDeleteJournalEntry={deleteJournalEntry} />;
       case 'calendar': return <Calendar events={events} tasks={tasks} onCreateEvent={createEvent} onUpdateEvent={updateEvent} onDeleteEvent={deleteEvent} onCreateTask={createTask} onUpdateTask={updateTask} />;
       case 'tasks':    return <Tasks tasks={tasks} onCreateTask={createTask} onUpdateTask={updateTask} onDeleteTask={deleteTask} />;
-      case 'chat':     return <Chat />;
       case 'pages':    return <Pages folders={folders} pages={pages} activePageId={activePageId} onSelectPage={setActivePageId}
           onCreatePage={createPage}
-          onUpdatePage={updatePage} onDeletePage={deletePage} onCreateFolder={createFolder} onUpdateFolder={updateFolder} onDeleteFolder={deleteFolder} onReorderFolders={reorderFolders} />;
+          onUpdatePage={updatePage} onDeletePage={deletePage} onCreateFolder={createFolder} onUpdateFolder={updateFolder} onDeleteFolder={deleteFolder} onReorderFolders={reorderFolders}
+          onViewChange={setActiveView} />;
       case 'canvas':   return <CanvasView />;
       default:         return <Editor page={activePage} onUpdate={(ch) => activePage && updatePage(activePage.id, ch)} />;
     }
   };
 
+  const isStandalone = activeView === 'email';
+
   return (
-    <div className="app">
+    <div className={`app${isStandalone ? ' app--standalone' : ''}`}>
+      {showWelcome && (
+        <Welcome onDone={() => {
+          localStorage.setItem(WELCOMED_KEY, '1');
+          setShowWelcome(false);
+        }} />
+      )}
+
       {/* Backdrop — transparent, closes sidebar when clicking content area */}
-      {sidebarOpen && (
+      {sidebarOpen && !isStandalone && (
         <div className="app__sidebar-backdrop" onClick={closeSidebar} />
       )}
 
-      <Sidebar
-        folders={folders}
-        pages={pages}
-        tasks={tasks}
-        activePageId={activePageId}
-        activeView={activeView}
-        isOpen={sidebarOpen}
-        onMouseEnter={openSidebar}
-        onMouseLeave={closeSidebar}
-        onPageSelect={(id) => { setActivePage(id); closeSidebar(); }}
-        onPageCreate={createPage}
-        onPageDelete={deletePage}
-        onPageUpdate={updatePage}
-        onFolderCreate={createFolder}
-        onFolderUpdate={updateFolder}
-        onFolderDelete={deleteFolder}
-        onViewChange={(v) => { setActiveView(v); closeSidebar(); }}
-        onOpenSettings={() => { setShowSettings(true); closeSidebar(); }}
-      />
+      {!isStandalone && (
+        <Sidebar
+          folders={folders}
+          pages={pages}
+          tasks={tasks}
+          activePageId={activePageId}
+          activeView={activeView}
+          isOpen={sidebarOpen}
+          onMouseEnter={openSidebar}
+          onMouseLeave={closeSidebar}
+          onPageSelect={(id) => { setActivePage(id); closeSidebar(); }}
+          onPageCreate={createPage}
+          onPageDelete={deletePage}
+          onPageUpdate={updatePage}
+          onFolderCreate={createFolder}
+          onFolderUpdate={updateFolder}
+          onFolderDelete={deleteFolder}
+          onViewChange={(v) => { setActiveView(v); closeSidebar(); }}
+          onOpenSettings={() => { setShowSettings(true); closeSidebar(); }}
+        />
+      )}
 
-      <main className="app__main">
-        <div className={`view-wrap${getThemeClass(activeView.startsWith('dm:') ? 'chat' : activeView) ? ' '+getThemeClass(activeView.startsWith('dm:') ? 'chat' : activeView) : ''}`}
-          key={themeRev}>
-          {renderMain()}
+      {isStandalone ? (
+        <div className="app__standalone">
+          <EmailPage onBack={() => setActiveView('pages')} />
         </div>
-      </main>
+      ) : (
+        <main className="app__main">
+          <div className={`view-wrap${getThemeClass(activeView.startsWith('dm:') ? 'chat' : activeView) ? ' '+getThemeClass(activeView.startsWith('dm:') ? 'chat' : activeView) : ''}`}
+            key={themeRev}>
+            {renderMain()}
+          </div>
+        </main>
+      )}
 
       {showSettings && (
         <Settings

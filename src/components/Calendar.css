@@ -5,7 +5,7 @@
   height: 100vh;
   overflow: hidden;
   background: var(--bg);
-  direction: rtl;
+  direction: ltr;
   font-family: var(--font);
 }
 
@@ -30,7 +30,7 @@
 .gcal__tasks-panel {
   width: 280px; min-width: 280px; border-right: 1px solid var(--border);
   display: flex; flex-direction: column; background: var(--bg-2);
-  direction: rtl; overflow: hidden;
+  direction: ltr; overflow: hidden;
 }
 .gcal__tp-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -135,7 +135,7 @@
   overflow-x: auto;
   padding: 2px 4px;
   scrollbar-width: none;
-  direction: rtl;
+  direction: ltr;
 }
 .gcal__cats::-webkit-scrollbar { display: none; }
 
@@ -199,7 +199,7 @@
 }
 .gcal__cat-new-form input {
   border: none; outline: none; font-size: 12px;
-  background: transparent; width: 90px; direction: rtl; font-family: inherit;
+  background: transparent; width: 90px; direction: ltr; font-family: inherit;
 }
 .gcal__cat-colors { display: flex; gap: 3px; }
 .gcal__cat-colors button {
@@ -242,7 +242,7 @@
   box-shadow: var(--shadow-lg);
   min-width: 240px;
   z-index: 200;
-  direction: rtl;
+  direction: ltr;
   animation: share-in 0.15s ease;
 }
 
@@ -273,7 +273,7 @@
   background: transparent;
   border: none;
   font-family: inherit;
-  direction: rtl;
+  direction: ltr;
   transition: background 0.1s;
 }
 .gcal__share-option:hover { background: var(--bg-3); }
@@ -331,7 +331,7 @@
   border-radius: 10px;
   margin-top: 2px;
   display: inline-block;
-  direction: rtl;
+  direction: ltr;
 }
 
 .gcal__today-btn {
@@ -364,6 +364,20 @@
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.3px;
+}
+
+/* Live digital clock next to the title */
+.gcal__live-clock {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #ef4444;
+  background: rgba(239,68,68,.08);
+  border: 1px solid rgba(239,68,68,.18);
+  border-radius: 8px;
+  padding: 3px 9px;
+  letter-spacing: .5px;
+  white-space: nowrap;
 }
 
 .gcal__view-toggle {
@@ -669,7 +683,7 @@
 }
 .gcal__task-form {
   background: var(--bg); border-radius: 16px; padding: 20px 24px;
-  width: 360px; max-width: 94vw; direction: rtl;
+  width: 360px; max-width: 94vw; direction: ltr;
   box-shadow: 0 16px 48px rgba(0,0,0,.2);
   display: flex; flex-direction: column; gap: 14px;
 }
@@ -682,7 +696,7 @@
 }
 .gcal__task-form-input {
   width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 10px;
-  font-size: 14.5px; font-family: inherit; direction: rtl; outline: none;
+  font-size: 14.5px; font-family: inherit; direction: ltr; outline: none;
   color: var(--text); background: var(--bg); transition: border-color .14s;
 }
 .gcal__task-form-input:focus { border-color: #10b981; }
@@ -756,24 +770,58 @@
 .gcal__day-col:last-child { border-right: none; }
 .gcal__day-col:hover { background: rgba(99,102,241,0.02); }
 
-/* Now indicator */
-.gcal__now-line {
+/* Now indicator — label in gutter, dot+bar only in today's column */
+
+/* Time label in the gutter (always visible) */
+.gcal__now-gutter-label {
   position: absolute;
   left: 0;
-  right: 0;
-  z-index: 5;
+  width: 58px;
+  z-index: 10;
+  pointer-events: none;
+  text-align: right;
+  padding-right: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #ef4444;
+  letter-spacing: .2px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+/* Dot + bar — positioned from today's column left to today's column right */
+.gcal__now-line {
+  position: absolute;
+  z-index: 10;
   display: flex;
   align-items: center;
   pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .gcal__now-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #ef4444;
   flex-shrink: 0;
-  margin-right: -5px;
+  margin-right: -4px;
+  position: relative;
+  z-index: 1;
+}
+/* Pulse ring */
+.gcal__now-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(239,68,68,.35);
+  animation: nowPulse 2s ease-in-out infinite;
+}
+@keyframes nowPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.6); opacity: 0; }
 }
 
 .gcal__now-bar {
@@ -848,7 +896,7 @@
   box-shadow: var(--shadow-xl);
   width: 460px;
   max-width: 94vw;
-  direction: rtl;
+  direction: ltr;
   overflow: hidden;
 }
 
@@ -892,7 +940,7 @@
   outline: none;
   background: transparent;
   color: var(--text);
-  direction: rtl;
+  direction: ltr;
   padding-bottom: 4px;
   border-bottom: 2px solid var(--border);
   transition: border-color 0.15s;
@@ -974,7 +1022,7 @@
   resize: none;
   background: var(--bg);
   color: var(--text);
-  direction: rtl;
+  direction: ltr;
   transition: border-color 0.15s;
   line-height: 1.5;
 }
@@ -1044,3 +1092,17 @@
   transition: background 0.15s;
 }
 .gcal__modal-save:hover { background: var(--accent-2); }
+
+
+/* ── Share with group ── */
+.gcal__share-row { align-items: flex-start !important; }
+.gcal__share-groups { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.gcal__share-label { font-size: 12px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; }
+.gcal__share-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.gcal__share-chip {
+  padding: 4px 12px; border-radius: 20px; border: 1.5px solid var(--border);
+  background: var(--bg-2); font-size: 12.5px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; font-family: inherit; transition: all .14s;
+}
+.gcal__share-chip:hover { border-color: #94a3b8; color: var(--text); }
+.gcal__share-chip.active { font-weight: 700; }

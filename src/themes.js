@@ -37,3 +37,19 @@ export function getThemeClass(viewId) {
   const id = t[viewId] || 'default';
   return THEMES.find(th => th.id === id)?.css || '';
 }
+
+// ── Color mode (light / dark) ─────────────────────────────────────────────────
+const COLOR_MODE_KEY = 'thoughts_color_mode';
+
+export function getColorMode() {
+  return localStorage.getItem(COLOR_MODE_KEY) || 'light';
+}
+
+export function setColorMode(mode) {
+  localStorage.setItem(COLOR_MODE_KEY, mode);
+  document.documentElement.setAttribute('data-mode', mode);
+}
+
+export function applyColorMode() {
+  document.documentElement.setAttribute('data-mode', getColorMode());
+}

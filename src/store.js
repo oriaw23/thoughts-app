@@ -21,10 +21,7 @@ const WELCOME_BLOCKS = JSON.stringify([
 ]);
 
 const defaultData = {
-  folders: [
-    { id: 'folder-work',     name: 'Work',     icon: '💼', collapsed: false },
-    { id: 'folder-personal', name: 'Personal', icon: '🏠', collapsed: false },
-  ],
+  folders: [],
   pages: [
     {
       id: 'welcome',
@@ -141,11 +138,20 @@ export function useStore() {
   }, [update]);
 
   // ─── Pages ──
-  const createPage = useCallback((folderId = null) => {
+  const createPage = useCallback((folderId = null, initial = {}) => {
     const id = uuidv4();
     update(d => ({
       ...d,
-      pages: [...d.pages, { id, title: 'Untitled', icon: '📄', content: '', folderId, pinned: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }],
+      pages: [...d.pages, {
+        id,
+        title: initial.title || 'Untitled',
+        icon: initial.icon || '📄',
+        content: initial.content || '',
+        folderId,
+        pinned: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }],
       activePageId: id,
       activeView: 'pages',
     }));

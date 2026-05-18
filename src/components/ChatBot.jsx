@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import './ChatBot.css';
 
-const GROQ_ENDPOINT = '/api/groq/openai/v1/chat/completions';
-const MODEL = 'llama-3.3-70b-versatile';
-
-const SYSTEM = `אתה עוזר אישי חכם בתוך אפליקציית MyNotion.
+const SYSTEM = `אתה עוזר אישי חכם בתוך אפליקציית Thoughts.
 עזור למשתמש עם תכנון, מטרות, משימות, כתיבה וכל שאלה.
 ענה תמיד בעברית, קצר וברור. השתמש ב-Markdown לפורמט יפה.`;
 
@@ -15,17 +13,17 @@ const STARTERS = [
   'כתוב לי רשימת משימות לשבוע',
 ];
 
-function getKey() { return localStorage.getItem('groq_key') || ''; }
-function saveKey(k) { localStorage.setItem('groq_key', k); }
+function getKey() { return localStorage.getItem('gemini_key') || ''; }
+function saveKey(k) { localStorage.setItem('gemini_key', k); }
 
 export default function ChatBot() {
-  const [open, setOpen]       = useState(false);
-  const [apiKey, setApiKey]   = useState(getKey);
+  const [open, setOpen]         = useState(false);
+  const [apiKey, setApiKey]     = useState(getKey);
   const [keyDraft, setKeyDraft] = useState('');
-  const [msgs, setMsgs]       = useState([]);
-  const [input, setInput]     = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState('');
+  const [msgs, setMsgs]         = useState([]);
+  const [input, setInput]       = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
 
@@ -42,7 +40,7 @@ export default function ChatBot() {
 
   const handleSaveKey = () => {
     const k = keyDraft.trim();
-    if (!k.startsWith('gsk_')) { setError('מפתח לא תקין — חייב להתחיל ב-gsk_'); return; }
+    if (!k.startsWith('AIza')) { setError('מפתח לא תקין — חייב להתחיל ב-AIza'); return; }
     saveKey(k);
     setApiKey(k);
     setKeyDraft('');
@@ -61,33 +59,25 @@ export default function ChatBot() {
     setLoading(true);
 
     try {
-      const res = await fetch(GROQ_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: [
-            { role: 'system', content: SYSTEM },
-            ...newMsgs.slice(-12),
-          ],
-          temperature: 0.7,
-          max_tokens: 1024,
-        }),
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        systemInstruction: SYSTEM,
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error?.message || `שגיאה ${res.status}`);
-      }
+      // Build history (all messages except the last user message)
+      const history = newMsgs.slice(0, -1).map(m => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: m.content }],
+      }));
 
-      const data = await res.json();
-      const reply = data.choices?.[0]?.message?.content || '';
+      const chat = model.startChat({ history });
+      const result = await chat.sendMessage(msg);
+      const reply = result.response.text();
+
       setMsgs(p => [...p, { role: 'assistant', content: reply }]);
     } catch (e) {
-      setError(e.message.includes('401') ? 'מפתח API לא תקין' : e.message);
+      setError(e.message?.includes('API_KEY') ? 'מפתח API לא תקין' : (e.message || 'שגיאה לא ידועה'));
     } finally {
       setLoading(false);
     }
@@ -95,7 +85,6 @@ export default function ChatBot() {
 
   return (
     <>
-      {/* Bubble button */}
       <button
         className={`cb-fab ${open ? 'cb-fab--open' : ''}`}
         onClick={() => setOpen(p => !p)}
@@ -108,17 +97,15 @@ export default function ChatBot() {
         {!open && !apiKey && <span className="cb-fab__badge">!</span>}
       </button>
 
-      {/* Chat window */}
       {open && (
         <div className="cb-win">
-          {/* Header */}
           <div className="cb-header">
             <div className="cb-header__left">
               <div className="cb-header__avatar">AI</div>
               <div>
-                <p className="cb-header__name">עוזר MyNotion</p>
+                <p className="cb-header__name">עוזר Thoughts</p>
                 <p className="cb-header__sub">
-                  {apiKey ? <><span className="cb-header__dot" />מחובר · Llama 3.3</> : 'לא מחובר'}
+                  {apiKey ? <><span className="cb-header__dot" />מחובר · Gemini Flash</> : 'לא מחובר'}
                 </p>
               </div>
             </div>
@@ -139,19 +126,18 @@ export default function ChatBot() {
           </div>
 
           {!apiKey ? (
-            /* ── Setup screen ── */
             <div className="cb-setup">
-              <div className="cb-setup__icon">🔑</div>
-              <h3 className="cb-setup__title">חבר את ה-AI</h3>
+              <div className="cb-setup__icon">✨</div>
+              <h3 className="cb-setup__title">חבר את Gemini AI</h3>
               <p className="cb-setup__desc">
-                צור מפתח חינמי ב-<br/>
-                <strong>console.groq.com</strong><br/>
-                ← API Keys ← Create API Key
+                קבל מפתח חינמי ב-<br/>
+                <strong>aistudio.google.com</strong><br/>
+                ← Get API key
               </p>
               <input
                 className="cb-setup__input"
                 type="password"
-                placeholder="gsk_..."
+                placeholder="AIza..."
                 value={keyDraft}
                 onChange={e => { setKeyDraft(e.target.value); setError(''); }}
                 onKeyDown={e => e.key === 'Enter' && handleSaveKey()}
@@ -168,7 +154,6 @@ export default function ChatBot() {
             </div>
           ) : (
             <>
-              {/* ── Messages ── */}
               <div className="cb-msgs">
                 {msgs.length === 0 && (
                   <div className="cb-starters">
@@ -200,7 +185,6 @@ export default function ChatBot() {
                 <div ref={bottomRef} />
               </div>
 
-              {/* ── Input ── */}
               <div className="cb-input-wrap">
                 <textarea
                   ref={inputRef}

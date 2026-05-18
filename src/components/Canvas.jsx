@@ -121,7 +121,8 @@ function CanvasEditor({ canvas, initialNodes, initialEdges, onChange }) {
   const [edges, setEdges]           = useState(initialEdges);
   const [vp, setVp]                 = useState({ x: 0, y: 0, s: 1 });
   const [showPicker, setShowPicker] = useState(false);
-  const [darkBg, setDarkBg]         = useState(false);
+  const [darkBg,  setDarkBg]         = useState(false);
+  const [whiteBg, setWhiteBg]        = useState(false);
   const [selectedIds, setSelectedIds] = useState(new Set()); // multi-select node IDs
   const [selectedEdgeId, setSelectedEdgeId] = useState(null);
   const [hovered, setHovered]       = useState(null);
@@ -412,7 +413,7 @@ function CanvasEditor({ canvas, initialNodes, initialEdges, onChange }) {
 
   return (
     <div
-      className={`cv-editor${darkBg ? ' cv-editor--dark' : ''}`}
+      className={`cv-editor${darkBg ? ' cv-editor--dark' : ''}${whiteBg ? ' cv-editor--white' : ''}`}
       ref={containerRef}
       style={{
         backgroundSize: `${dotPx}px ${dotPx}px`,
@@ -542,6 +543,7 @@ function CanvasEditor({ canvas, initialNodes, initialEdges, onChange }) {
       <CanvasShapesPanel
         onAddNode={addNode}
         onAddTemplate={addTemplate}
+        onWhiteboard={() => { setNodes([]); setEdges([]); setDarkBg(false); setWhiteBg(true); }}
       />
 
       {/* Empty state hint */}

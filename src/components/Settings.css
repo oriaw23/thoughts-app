@@ -31,6 +31,83 @@
 .settings-theme-preview { font-size: 14px; }
 .settings-theme-name { font-size: 12px; white-space: nowrap; }
 
+/* ── Appearance / color mode picker ── */
+.settings-mode-grid {
+  display: flex;
+  gap: 14px;
+}
+
+.settings-mode-card {
+  flex: 1;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  padding: 0;
+  font-family: inherit;
+  text-align: center;
+}
+.settings-mode-card:hover { border-color: var(--border-2); }
+.settings-mode-card.active { border-color: #0f172a; box-shadow: 0 0 0 3px rgba(15,23,42,0.1); }
+
+.settings-mode-preview {
+  padding: 16px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.settings-mode-preview--light { background: #f8fafc; }
+.settings-mode-preview--dark  { background: #1a1a1a; }
+
+.smp__bar {
+  height: 8px;
+  border-radius: 4px;
+  width: 40%;
+}
+.settings-mode-preview--light .smp__bar { background: #0f172a; }
+.settings-mode-preview--dark  .smp__bar { background: #e5e7eb; }
+
+.smp__lines { display: flex; flex-direction: column; gap: 5px; }
+.smp__line { height: 5px; border-radius: 3px; }
+.settings-mode-preview--light .smp__line { background: #e2e8f0; }
+.settings-mode-preview--dark  .smp__line { background: #2d2d2d; }
+
+.settings-mode-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  border-top: 1px solid var(--border);
+}
+.settings-mode-card.active .settings-mode-label { color: var(--text); }
+
+.settings-mode-check {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: white;
+  font-size: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.settings-mode-card.active .settings-mode-check { opacity: 1; }
+
+/* Dark-mode fix for active card outline */
+html[data-mode="dark"] .settings-mode-card.active { border-color: #e5e7eb; box-shadow: 0 0 0 3px rgba(229,231,235,0.1); }
+html[data-mode="dark"] .settings-mode-check { background: #e5e7eb; color: #1a1a1a; }
+html[data-mode="dark"] .settings-tab.active { color: #e5e7eb; border-bottom-color: #e5e7eb; }
+
 .settings-overlay {
   position: fixed;
   inset: 0;

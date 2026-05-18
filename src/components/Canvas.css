@@ -823,6 +823,13 @@
 }
 .cv-picker__label { font-size: 11px; font-weight: 600; color: #64748b; direction: rtl; }
 
+/* White / Whiteboard background */
+.cv-editor--white {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+.cv-editor--white .cv-node__inner { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+
 /* Dark background */
 .cv-editor--dark {
   background-color: #0f172a;
