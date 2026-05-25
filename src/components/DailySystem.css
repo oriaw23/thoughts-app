@@ -43,7 +43,7 @@
   padding: 6px 14px;
   background: var(--green-light);
   color: #065f46;
-  border-radius: 20px;
+  border-radius: 6px;
   font-size: 12.5px;
   font-weight: 600;
 }
@@ -53,12 +53,12 @@
   align-items: center;
   gap: 7px;
   padding: 9px 18px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #18181b, #8b5cf6);
   color: white;
   border-radius: var(--r-lg);
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+  box-shadow: 0 2px 8px rgba(24,24,27,0.3);
   transition: all 0.15s;
 }
 .daily__suggest-btn:hover:not(.loading):not(:disabled) { transform: translateY(-1px); }

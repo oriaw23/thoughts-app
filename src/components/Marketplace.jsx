@@ -5,12 +5,12 @@ import './Marketplace.css';
 const KEY = 'mynotion_marketplace';
 
 const CATEGORIES = [
-  { id:'all',       label:'All',          icon:'✦' },
-  { id:'courses',   label:'Courses',      icon:'🎓' },
-  { id:'templates', label:'Templates',    icon:'📋' },
-  { id:'tips',      label:'Tips & Tricks',icon:'💡' },
-  { id:'tools',     label:'Tools',        icon:'🛠️' },
-  { id:'leads',     label:'Leads',        icon:'🎯' },
+  { id:'all',       label:'All'          },
+  { id:'courses',   label:'Courses'      },
+  { id:'templates', label:'Templates'    },
+  { id:'tips',      label:'Tips & Tricks'},
+  { id:'tools',     label:'Tools'        },
+  { id:'leads',     label:'Leads'        },
 ];
 
 const FEATURED = [
@@ -108,7 +108,7 @@ export default function Marketplace() {
           {CATEGORIES.map(c => (
             <button key={c.id} className={`mkt__cat${cat===c.id?' active':''}`}
               onClick={() => setCat(c.id)}>
-              <span>{c.icon}</span> {c.label}
+              {c.label}
             </button>
           ))}
         </div>
@@ -126,27 +126,27 @@ export default function Marketplace() {
       {cat === 'all' && !search && (
         <div className="mkt__section">
           <div className="mkt__section-head">
-            <h2 className="mkt__section-title">⭐ Featured</h2>
+            <h2 className="mkt__section-title">Featured</h2>
           </div>
           <div className="mkt__featured-row">
             {FEATURED.map(item => (
               <div key={item.id} className="mkt__featured-card">
-                <div className="mkt__featured-top">
-                  {item.badge && <span className="mkt__badge">{item.badge}</span>}
-                  <span className="mkt__type-tag">{CATEGORIES.find(c=>c.id===item.type)?.label || item.type}</span>
-                </div>
-                <h3 className="mkt__featured-title">{item.title}</h3>
-                <p className="mkt__featured-desc">{item.desc}</p>
-                <div className="mkt__featured-meta">
-                  <Stars rating={item.rating} />
-                  <span className="mkt__meta-reviews">({item.reviews} reviews)</span>
-                </div>
-                <div className="mkt__featured-foot">
-                  <div>
-                    <span className="mkt__price">${item.price}</span>
-                    <span className="mkt__sales">{item.sales}+ sales</span>
+                <div className="mkt__featured-main">
+                  <div className="mkt__featured-top">
+                    {item.badge && <span className="mkt__badge">{item.badge}</span>}
+                    <span className="mkt__type-tag">{CATEGORIES.find(c=>c.id===item.type)?.label || item.type}</span>
                   </div>
-                  <button className="mkt__buy">Get Now →</button>
+                  <h3 className="mkt__featured-title">{item.title}</h3>
+                  <p className="mkt__featured-desc">{item.desc}</p>
+                  <div className="mkt__featured-meta">
+                    <Stars rating={item.rating} />
+                    <span className="mkt__meta-reviews">({item.reviews} reviews)</span>
+                  </div>
+                </div>
+                <div className="mkt__featured-right">
+                  <span className="mkt__price">${item.price}</span>
+                  <span className="mkt__sales">{item.sales}+ sales</span>
+                  <button className="mkt__buy">Get Now</button>
                 </div>
               </div>
             ))}
@@ -176,19 +176,21 @@ export default function Marketplace() {
           <div className="mkt__grid">
             {filtered.map(item => (
               <div key={item.id} className="mkt__card">
-                <div className="mkt__card-header">
-                  <span className="mkt__card-type">{CATEGORIES.find(c=>c.id===item.type)?.icon} {CATEGORIES.find(c=>c.id===item.type)?.label || item.type}</span>
-                  {item.badge && <span className="mkt__card-badge">{item.badge}</span>}
+                <div className="mkt__card-left">
+                  <div className="mkt__card-header">
+                    <span className="mkt__card-type">{CATEGORIES.find(c=>c.id===item.type)?.label || item.type}</span>
+                    {item.badge && <span className="mkt__card-badge">{item.badge}</span>}
+                  </div>
+                  <h3 className="mkt__card-title">{item.title}</h3>
+                  <p className="mkt__card-desc">{item.desc}</p>
+                  <div className="mkt__card-meta">
+                    {item.rating && <Stars rating={item.rating} />}
+                    <span className="mkt__card-author">by {item.author}</span>
+                  </div>
                 </div>
-                <h3 className="mkt__card-title">{item.title}</h3>
-                <p className="mkt__card-desc">{item.desc}</p>
-                <div className="mkt__card-meta">
-                  {item.rating && <Stars rating={item.rating} />}
-                  <span className="mkt__card-author">by {item.author}</span>
-                </div>
-                <div className="mkt__card-foot">
+                <div className="mkt__card-right">
                   <span className="mkt__price">${item.price}</span>
-                  <button className="mkt__card-buy">Get →</button>
+                  <button className="mkt__card-buy">Get</button>
                 </div>
               </div>
             ))}

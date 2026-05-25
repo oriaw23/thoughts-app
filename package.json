@@ -1,11 +1,13 @@
 {
   "name": "my-notion",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.4.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node server/index.js\"",
+    "dev:ui": "vite",
+    "server": "node server/index.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -35,7 +37,11 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "concurrently": "^9.2.1",
+    "pdfjs-dist": "^4.10.38",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "uuid": "^14.0.0"

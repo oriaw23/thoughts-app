@@ -47,7 +47,7 @@
 
 .kanban__progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #10b981);
+  background: linear-gradient(90deg, #18181b, #10b981);
   border-radius: 3px;
   transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
 }
@@ -80,7 +80,7 @@
   font-size: 13px;
   font-weight: 500;
   transition: background 0.15s, transform 0.1s;
-  box-shadow: 0 1px 2px rgba(99,102,241,0.3);
+  box-shadow: 0 1px 2px rgba(24,24,27,0.3);
 }
 .kanban__add-btn:hover { background: var(--accent-2); transform: translateY(-1px); }
 .kanban__add-btn:active { transform: translateY(0); }
@@ -102,7 +102,7 @@
   align-items: center;
   gap: 5px;
   padding: 5px 12px;
-  border-radius: 20px;
+  border-radius: 6px;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-2);
@@ -187,7 +187,7 @@
   color: var(--text-3);
   background: var(--border);
   padding: 1px 7px;
-  border-radius: 20px;
+  border-radius: 6px;
 }
 
 .kanban__col-add {
@@ -302,7 +302,7 @@
   font-size: 10.5px;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 20px;
+  border-radius: 6px;
   margin-bottom: 7px;
   letter-spacing: 0.2px;
 }
@@ -361,7 +361,7 @@
   font-size: 11px;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: 20px;
+  border-radius: 6px;
 }
 
 .kanban__card-date {
@@ -386,7 +386,7 @@
   align-items: center;
   gap: 5px;
   padding: 5px 12px;
-  border-radius: 20px;
+  border-radius: 6px;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-2);

@@ -155,7 +155,7 @@
   padding: 12px;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -322,7 +322,7 @@
   background: var(--text);
   color: var(--bg);
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -427,7 +427,7 @@
 }
 .bk__d-status-btn {
   padding: 5px 12px;
-  border-radius: 20px;
+  border-radius: 6px;
   border: 1.5px solid var(--border);
   background: none;
   font-size: 12px;
@@ -539,7 +539,7 @@
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 5px;
   background: var(--bg-2);
   color: var(--text);
   font-size: 14px;
@@ -593,7 +593,7 @@
   flex: 1;
   padding: 9px 12px;
   border: 1.5px dashed var(--border);
-  border-radius: 10px;
+  border-radius: 4px;
   background: transparent;
   color: var(--text);
   font-size: 13px;

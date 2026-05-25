@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useStore } from './store';
 import { getViewThemes, getThemeClass, applyColorMode } from './themes';
 import './darkmode.css';
@@ -22,6 +22,16 @@ import Groups from './components/Groups';
 import Trash from './components/Trash';
 import Help from './components/Help';
 import EmailPage from './components/EmailPage';
+import ContentPipeline from './components/ContentPipeline';
+import RevenueTracker from './components/RevenueTracker';
+import IdeaVault from './components/IdeaVault';
+import CreatorDashboard from './components/CreatorDashboard';
+import HomePage from './components/HomePage';
+import WorkflowPage from './components/WorkflowPage';
+import AutomationBuilder from './components/AutomationBuilder';
+import AppsPage from './components/AppsPage';
+import ChannelChat from './components/ChannelChat';
+import IntegrationsPage from './components/IntegrationsPage';
 import './App.css';
 
 // ── SVG icons for mobile nav ──────────────────────────────────────────────────
@@ -93,12 +103,22 @@ function MobileNav({ activeView, onViewChange, onOpenSettings, pendingTasks }) {
 
 const WELCOMED_KEY = 'thoughts_welcomed_v1';
 
+const VIEW_LABELS = {
+  home:'Command', workflow:'Automations', matters:'Matters',
+  documents:'Documents', research:'Research', integrations:'Integrations',
+  pages:'Documents', projects:'Matters', apps:'Apps', goals:'Goals', tasks:'Tasks',
+  calendar:'Calendar', canvas:'Canvas', marketplace:'Marketplace',
+  trash:'Trash', help:'Help', planning:'Planning',
+};
+
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem(WELCOMED_KEY));
   const [showSettings, setShowSettings] = useState(false);
   const [sidebarOpen, setSidebarOpen]   = useState(true);
   const [notesOpen, setNotesOpen]       = useState(false);
-  const [themeRev, setThemeRev]         = useState(0); // incremented to re-read themes
+  const [themeRev, setThemeRev]         = useState(0);
+
+  const toggleSidebar = useCallback(() => setSidebarOpen(p => !p), []);
 
   // Apply saved color mode on mount
   useEffect(() => { applyColorMode(); }, []);
@@ -109,14 +129,13 @@ export default function App() {
     window.addEventListener('toggle-global-notes', handler);
     return () => window.removeEventListener('toggle-global-notes', handler);
   }, []);
-  const closeTimer = useRef(null);
   const store = useStore();
 
   const {
     folders, pages, tasks, events, goals, weeklyGoals,
     activePageId, activeView, activePage,
     createFolder, updateFolder, deleteFolder, reorderFolders,
-    createPage, updatePage, deletePage, setActivePage, setActivePageId, setActiveView,
+    createPage, createPageBackground, updatePage, deletePage, setActivePage, setActivePageId, setActiveView,
     createTask, updateTask, deleteTask,
     createEvent, updateEvent, deleteEvent,
     createGoal, updateGoal, toggleMilestone, deleteGoal,
@@ -124,14 +143,6 @@ export default function App() {
     createWeeklyGoal, toggleWeeklyGoal, deleteWeeklyGoal,
   } = store;
 
-  const openSidebar = useCallback(() => {
-    clearTimeout(closeTimer.current);
-    setSidebarOpen(true);
-  }, []);
-
-  const closeSidebar = useCallback(() => {
-    closeTimer.current = setTimeout(() => setSidebarOpen(false), 380);
-  }, []);
 
   const renderMain = () => {
     if (activeView.startsWith('dm:')) {
@@ -141,8 +152,23 @@ export default function App() {
       const groupId = activeView.slice(6);
       return <Groups key={groupId} initialGroupId={groupId} />;
     }
+    if (activeView.startsWith('channel:')) {
+      const channelId = activeView.slice(8);
+      return <ChannelChat key={channelId} channelId={channelId} />;
+    }
     switch (activeView) {
-      case 'email':       return null;
+      case 'email':       return null; // email is now a block type
+      case 'home':        return <HomePage onNavigate={v => setActiveView(v)} onCreatePage={createPageBackground} onCreateTask={createTask} onCreateEvent={createEvent} />;
+      case 'workflow':    return <AutomationBuilder />;
+      case 'matters':     return <Projects pages={pages} tasks={tasks} events={events} goals={goals} onNavigate={(view,opts={})=>{ if(opts.pageId)setActivePageId(opts.pageId); setActiveView(view); }}/>;
+      case 'documents':   return <Pages folders={folders} pages={pages} activePageId={activePageId} onSelectPage={setActivePageId} onCreatePage={createPage} onUpdatePage={updatePage} onDeletePage={deletePage} onCreateFolder={createFolder} onUpdateFolder={updateFolder} onDeleteFolder={deleteFolder} onReorderFolders={reorderFolders} onViewChange={setActiveView}/>;
+      case 'research':    return <IdeaVault />;
+      case 'apps':         return <AppsPage />;
+      case 'integrations': return <IntegrationsPage />;
+      case 'creator':     return <CreatorDashboard onNavigate={v => setActiveView(v)} />;
+      case 'pipeline':    return <ContentPipeline />;
+      case 'revenue':     return <RevenueTracker />;
+      case 'ideas':       return <IdeaVault />;
       case 'marketplace': return <Marketplace />;
       case 'trash':       return <Trash />;
       case 'help':        return <Help />;
@@ -176,11 +202,6 @@ export default function App() {
         }} />
       )}
 
-      {/* Backdrop — transparent, closes sidebar when clicking content area */}
-      {sidebarOpen && !isStandalone && (
-        <div className="app__sidebar-backdrop" onClick={closeSidebar} />
-      )}
-
       {!isStandalone && (
         <Sidebar
           folders={folders}
@@ -189,17 +210,15 @@ export default function App() {
           activePageId={activePageId}
           activeView={activeView}
           isOpen={sidebarOpen}
-          onMouseEnter={openSidebar}
-          onMouseLeave={closeSidebar}
-          onPageSelect={(id) => { setActivePage(id); closeSidebar(); }}
+          onPageSelect={(id) => { setActivePage(id); }}
           onPageCreate={createPage}
           onPageDelete={deletePage}
           onPageUpdate={updatePage}
           onFolderCreate={createFolder}
           onFolderUpdate={updateFolder}
           onFolderDelete={deleteFolder}
-          onViewChange={(v) => { setActiveView(v); closeSidebar(); }}
-          onOpenSettings={() => { setShowSettings(true); closeSidebar(); }}
+          onViewChange={(v) => { setActiveView(v); }}
+          onOpenSettings={() => { setShowSettings(true); }}
         />
       )}
 
@@ -209,6 +228,27 @@ export default function App() {
         </div>
       ) : (
         <main className="app__main">
+          {/* Top bar */}
+          <header className="app__topbar">
+            <button className="app__topbar-toggle" onClick={toggleSidebar} title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6"  x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
+            <span className="app__topbar-title">
+              {activeView.startsWith('dm:') ? 'Message' :
+               activeView.startsWith('group:') ? 'Group' :
+               activeView.startsWith('channel:') ? 'Channel' :
+               VIEW_LABELS[activeView] || 'Foldbase'}
+            </span>
+            <div className="app__topbar-right">
+              <button className="app__topbar-btn" onClick={() => setShowSettings(true)} title="Settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+            </div>
+          </header>
           <div className={`view-wrap${getThemeClass(activeView.startsWith('dm:') ? 'chat' : activeView) ? ' '+getThemeClass(activeView.startsWith('dm:') ? 'chat' : activeView) : ''}`}
             key={themeRev}>
             {renderMain()}
@@ -220,6 +260,7 @@ export default function App() {
         <Settings
           onClose={() => setShowSettings(false)}
           onThemeChange={() => setThemeRev(r => r+1)}
+          onNavigate={v => { setActiveView(v); setShowSettings(false); }}
         />
       )}
 

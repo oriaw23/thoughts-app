@@ -34,7 +34,7 @@
   display: flex; align-items: center; gap: 9px;
   padding: 8px 10px; border: none; background: none; cursor: pointer;
   color: var(--text); font-size: 15px; font-weight: 800; font-family: inherit;
-  border-radius: 10px; margin-bottom: 8px; white-space: nowrap;
+  border-radius: 4px; margin-bottom: 8px; white-space: nowrap;
   transition: background .13s; letter-spacing: -.2px;
 }
 .em__nav-brand:hover { background: var(--bg-3); }
@@ -45,7 +45,7 @@
   display: flex; align-items: center; gap: 10px;
   padding: 9px 10px; border: none; background: none; cursor: pointer;
   color: var(--text-2); font-size: 13px; font-weight: 500;
-  font-family: inherit; border-radius: 10px; white-space: nowrap;
+  font-family: inherit; border-radius: 4px; white-space: nowrap;
   transition: all .13s; text-align: left; position: relative;
 }
 .em__nav-item:hover { background: var(--bg-3); color: var(--text); }
@@ -54,7 +54,7 @@
 .em__nav-label { flex: 1; }
 .em__nav-badge {
   min-width: 18px; height: 18px; padding: 0 5px;
-  background: #6366f1; color: #fff; border-radius: 9px;
+  background: #18181b; color: #fff; border-radius: 9px;
   font-size: 11px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -63,13 +63,13 @@
 .em__compose-fab {
   display: flex; align-items: center; gap: 9px; justify-content: center;
   margin-top: 10px; padding: 11px 14px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff; border: none; border-radius: 12px; cursor: pointer;
+  background: linear-gradient(135deg, #18181b, #8b5cf6);
+  color: #fff; border: none; border-radius: 5px; cursor: pointer;
   font-size: 13px; font-weight: 700; font-family: inherit;
-  white-space: nowrap; box-shadow: 0 4px 16px rgba(99,102,241,.3);
+  white-space: nowrap; box-shadow: 0 4px 16px rgba(24,24,27,.3);
   transition: all .16s;
 }
-.em__compose-fab:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(99,102,241,.4); }
+.em__compose-fab:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(24,24,27,.4); }
 .em__nav--sm .em__compose-fab { padding: 11px; }
 
 /* ── Email list ─────────────────────────────────────────────── */
@@ -85,10 +85,10 @@
 }
 .em__search {
   display: flex; align-items: center; gap: 8px;
-  background: var(--bg-2); border-radius: 10px;
+  background: var(--bg-2); border-radius: 4px;
   padding: 8px 12px; border: 1px solid var(--border); transition: border-color .14s;
 }
-.em__search:focus-within { border-color: #6366f1; }
+.em__search:focus-within { border-color: #18181b; }
 .em__search svg { color: var(--text-3); flex-shrink: 0; }
 .em__search input {
   border: none; outline: none; background: transparent;
@@ -118,11 +118,11 @@
 .em__card--sel { background: var(--bg-2) !important; }
 .em__card--sel::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; background: #6366f1; border-radius: 0 2px 2px 0;
+  width: 3px; background: #18181b; border-radius: 0 2px 2px 0;
 }
 .em__card-dot {
   position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
-  width: 6px; height: 6px; background: #6366f1; border-radius: 50%;
+  width: 6px; height: 6px; background: #18181b; border-radius: 50%;
 }
 .em__card--unread .em__card-from,
 .em__card--unread .em__card-subject { font-weight: 700; color: var(--text); }
@@ -159,8 +159,8 @@
 .em__empty p { font-size: 14px; margin: 0; }
 .em__empty-cta {
   display: flex; align-items: center; gap: 8px; margin-top: 6px;
-  padding: 10px 22px; background: #6366f1; color: #fff; border: none;
-  border-radius: 10px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  padding: 10px 22px; background: #18181b; color: #fff; border: none;
+  border-radius: 4px; font-size: 13.5px; font-weight: 600; cursor: pointer;
   font-family: inherit; transition: opacity .14s;
 }
 .em__empty-cta:hover { opacity: .88; }
@@ -186,13 +186,13 @@
 }
 .em__act:hover { background: var(--bg-3); color: var(--text); }
 .em__act--star { font-size: 16px; color: #f59e0b; border-color: transparent; background: none; padding: 6px 8px; }
-.em__act--reply:hover { border-color: #6366f1; color: #6366f1; background: #eef2ff; }
+.em__act--reply:hover { border-color: #18181b; color: #18181b; background: #eef2ff; }
 html[data-mode="dark"] .em__act--reply:hover { background: #1e1b4b; }
 .em__act--del:hover { border-color: #fca5a5; color: #ef4444; background: #fee2e2; }
 
 .em__view-sender { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
 .em__view-av {
-  width: 42px; height: 42px; border-radius: 14px;
+  width: 42px; height: 42px; border-radius: 5px;
   display: flex; align-items: center; justify-content: center;
   font-size: 15px; font-weight: 800; color: #fff; flex-shrink: 0;
 }
@@ -207,11 +207,11 @@ html[data-mode="dark"] .em__act--reply:hover { background: #1e1b4b; }
 
 .em__quick-reply {
   display: inline-flex; align-items: center; gap: 7px; margin-top: 32px;
-  padding: 10px 20px; border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 10px 20px; border: 1.5px solid var(--border); border-radius: 4px;
   background: var(--bg-2); color: var(--text-2); font-size: 13.5px; font-weight: 600;
   cursor: pointer; font-family: inherit; transition: all .14s;
 }
-.em__quick-reply:hover { border-color: #6366f1; color: #6366f1; background: #eef2ff; }
+.em__quick-reply:hover { border-color: #18181b; color: #18181b; background: #eef2ff; }
 html[data-mode="dark"] .em__quick-reply:hover { background: #1e1b4b; }
 
 /* ── Floating compose ─────────────────────────────────────────── */
@@ -219,7 +219,7 @@ html[data-mode="dark"] .em__quick-reply:hover { background: #1e1b4b; }
   position: absolute; bottom: 20px; right: 24px;
   width: 440px; max-height: 520px;
   background: var(--bg); border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 6px;
   box-shadow: 0 20px 60px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.08);
   display: flex; flex-direction: column; overflow: hidden; z-index: 100;
   animation: composeIn .22s cubic-bezier(.34,1.56,.64,1);
@@ -269,9 +269,9 @@ html[data-mode="dark"] .em__quick-reply:hover { background: #1e1b4b; }
 }
 .em__send {
   display: flex; align-items: center; gap: 7px; padding: 9px 20px;
-  background: #6366f1; color: #fff; border: none; border-radius: 9px;
+  background: #18181b; color: #fff; border: none; border-radius: 9px;
   font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit;
-  box-shadow: 0 2px 10px rgba(99,102,241,.3); transition: all .14s;
+  box-shadow: 0 2px 10px rgba(24,24,27,.3); transition: all .14s;
 }
 .em__send:hover { background: #5558e3; transform: translateY(-1px); }
 .em__send:disabled { opacity: .4; cursor: not-allowed; transform: none; }

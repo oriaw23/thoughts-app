@@ -41,7 +41,7 @@ const defaultData = {
   weeklyGoals: [],
   dailyPlans: {},
   activePageId: 'welcome',
-  activeView: 'pages',
+  activeView: 'home',
 };
 
 function loadData() {
@@ -154,6 +154,25 @@ export function useStore() {
       }],
       activePageId: id,
       activeView: 'pages',
+    }));
+    return id;
+  }, [update]);
+
+  // Like createPage but doesn't navigate away — used by AI actions on the home screen
+  const createPageBackground = useCallback((folderId = null, initial = {}) => {
+    const id = uuidv4();
+    update(d => ({
+      ...d,
+      pages: [...d.pages, {
+        id,
+        title: initial.title || 'Untitled',
+        icon: initial.icon || '📄',
+        content: initial.content || '',
+        folderId,
+        pinned: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }],
     }));
     return id;
   }, [update]);
@@ -363,7 +382,7 @@ export function useStore() {
     thoughts: data.thoughts, goals: data.goals, weeklyGoals: data.weeklyGoals||[], dailyPlans: data.dailyPlans,
     activePageId: data.activePageId, activeView: data.activeView, activePage, todayPlan, todayStr,
     createFolder, updateFolder, deleteFolder, reorderFolders,
-    createPage, updatePage, deletePage, setActivePage, setActivePageId, setActiveView,
+    createPage, createPageBackground, updatePage, deletePage, setActivePage, setActivePageId, setActiveView,
     createTask, updateTask, deleteTask,
     createEvent, updateEvent, deleteEvent,
     addThoughts, convertThought, deleteThought, clearThoughts,

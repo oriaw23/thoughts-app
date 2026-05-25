@@ -1,0 +1,179 @@
+/* ══ Apps Page ══════════════════════════════════════════════════════════════ */
+.ap { flex:1; display:flex; flex-direction:column; overflow:hidden; background:var(--bg); }
+
+/* ── Header ── */
+.ap__header {
+  padding:28px 32px 0; flex-shrink:0;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+}
+.ap__header-top {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:16px; margin-bottom:20px;
+}
+.ap__title {
+  font-size:24px; font-weight:800; color:var(--text);
+  margin:0 0 4px; letter-spacing:-.4px;
+}
+.ap__subtitle { font-size:14px; color:var(--text-3); margin:0; }
+
+/* Search */
+.ap__search-wrap {
+  position:relative; flex-shrink:0;
+}
+.ap__search-icon {
+  position:absolute; left:11px; top:50%; transform:translateY(-50%);
+  color:var(--text-3); pointer-events:none;
+}
+.ap__search {
+  padding:9px 14px 9px 34px; border:1.5px solid var(--border);
+  border-radius:10px; background:var(--bg-2);
+  font-size:13.5px; font-family:inherit; color:var(--text);
+  outline:none; width:220px; transition:border-color .15s;
+}
+.ap__search:focus { border-color:var(--text-3); }
+.ap__search::placeholder { color:var(--text-3); }
+
+/* Category tabs */
+.ap__cats {
+  display:flex; gap:2px; overflow-x:auto; padding-bottom:1px;
+}
+.ap__cats::-webkit-scrollbar { display:none; }
+.ap__cat {
+  padding:9px 16px; border:none; background:none; cursor:pointer;
+  font-size:13.5px; font-weight:500; color:var(--text-3);
+  font-family:inherit; border-bottom:2px solid transparent;
+  transition:all .13s; white-space:nowrap; flex-shrink:0;
+}
+.ap__cat:hover  { color:var(--text-2); }
+.ap__cat.active { color:var(--text); border-bottom-color:var(--text); font-weight:600; }
+
+/* ── Body ── */
+.ap__body {
+  flex:1; overflow-y:auto; padding:28px 32px;
+}
+.ap__body::-webkit-scrollbar { width:4px; }
+.ap__body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.ap__section { margin-bottom:36px; }
+.ap__section-title {
+  font-size:13px; font-weight:700; color:var(--text-3);
+  text-transform:uppercase; letter-spacing:.7px; margin:0 0 16px;
+}
+.ap__empty { padding:60px 0; text-align:center; color:var(--text-3); font-size:14px; }
+
+/* Installed row */
+.ap__installed-row {
+  display:flex; gap:10px; flex-wrap:wrap; margin-bottom:4px;
+}
+.ap__installed-chip {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 14px; border:1.5px solid var(--border);
+  border-radius:12px; background:var(--bg-2);
+  cursor:pointer; font-family:inherit; font-size:13.5px;
+  font-weight:600; color:var(--text); transition:all .13s;
+}
+.ap__installed-chip:hover {
+  border-color:var(--text-3); background:var(--bg-3);
+  transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+/* App icon */
+.ap-app-icon {
+  border-radius:14px; display:flex; align-items:center;
+  justify-content:center; font-weight:800; flex-shrink:0;
+  letter-spacing:-.3px; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.10);
+}
+.ap-app-icon img {
+  display:block; border-radius:4px;
+}
+
+/* Apps grid */
+.ap__grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:14px;
+}
+
+/* App card */
+.ap__card {
+  background:var(--bg-2); border:1.5px solid var(--border);
+  border-radius:16px; padding:18px 18px 14px;
+  display:flex; flex-direction:column; gap:5px;
+  transition:all .15s; position:relative;
+  animation:ap-in .2s ease both;
+}
+@keyframes ap-in { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.ap__card:hover {
+  border-color:var(--text-3);
+  box-shadow:0 4px 16px rgba(0,0,0,.07);
+  transform:translateY(-2px);
+}
+.ap__card--installed {
+  border-color:#c4b5fd;
+  background:var(--bg);
+}
+html[data-mode="dark"] .ap__card--installed { border-color:#4c1d95; }
+
+.ap__card-top {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:10px;
+}
+.ap__card-btn {
+  padding:5px 12px; border-radius:8px; font-size:12px; font-weight:600;
+  border:1.5px solid var(--border); background:var(--bg);
+  color:var(--text-2); cursor:pointer; font-family:inherit;
+  transition:all .13s; white-space:nowrap; flex-shrink:0; align-self:flex-start;
+}
+.ap__card-btn:hover { border-color:var(--text-3); color:var(--text); }
+.ap__card-btn--installed {
+  background:#f3f4f6; color:#6b7280; border-color:#e5e7eb;
+}
+html[data-mode="dark"] .ap__card-btn--installed { background:#1f2937; color:#6b7280; border-color:#374151; }
+.ap__card-btn--installed:hover { background:#fee2e2; color:#ef4444; border-color:#fca5a5; }
+
+.ap__card-name { font-size:14px; font-weight:700; color:var(--text); line-height:1.3; }
+.ap__card-cat  { font-size:11.5px; color:var(--text-3); font-weight:500; margin-bottom:2px; }
+.ap__card-desc { font-size:12.5px; color:var(--text-2); line-height:1.5; }
+
+.ap__card-open {
+  margin-top:8px; padding:7px 0; width:100%; border-radius:8px;
+  border:1.5px solid #c4b5fd; background:#f5f3ff;
+  color:#7c3aed; font-size:12.5px; font-weight:600;
+  cursor:pointer; font-family:inherit; transition:all .13s;
+}
+html[data-mode="dark"] .ap__card-open { background:#2e1065; border-color:#4c1d95; color:#c4b5fd; }
+.ap__card-open:hover { background:#ede9fe; }
+
+/* ── Embedded app overlay ── */
+.ap-embed-overlay {
+  position:fixed; inset:0; z-index:900;
+  display:flex; flex-direction:column;
+  background:var(--bg);
+  animation:ap-in .2s ease both;
+}
+.ap-embed-bar {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 16px; border-bottom:1px solid var(--border);
+  flex-shrink:0; background:var(--bg-2);
+}
+.ap-embed-name {
+  flex:1; font-size:14px; font-weight:700; color:var(--text);
+}
+.ap-embed-external {
+  display:flex; align-items:center; gap:5px;
+  font-size:12.5px; color:var(--text-3); font-weight:500;
+  text-decoration:none; padding:5px 10px; border-radius:7px;
+  border:1px solid var(--border); background:var(--bg);
+  transition:all .12s;
+}
+.ap-embed-external:hover { color:var(--text); border-color:var(--text-3); }
+.ap-embed-close {
+  width:30px; height:30px; border:1px solid var(--border);
+  border-radius:8px; background:var(--bg); color:var(--text-3);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .12s; flex-shrink:0;
+}
+.ap-embed-close:hover { background:#fee2e2; color:#ef4444; border-color:#fca5a5; }
+.ap-embed-frame {
+  flex:1; border:none; width:100%;
+}

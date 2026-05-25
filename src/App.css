@@ -3,18 +3,83 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  position: relative;
+  background: #f0f0f4; /* light: soft gray void around the white panel */
+}
+html[data-mode="dark"] .app {
+  background: #000000; /* dark: sidebar = void = pure black */
 }
 
 .app__main {
   flex: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* 56px icon strip + 8px offset + 8px gap */
-  margin-left: 72px;
-  width: calc(100% - 72px);
+  min-width: 0;
+  /* Floating rectangle — surrounded by the void */
+  margin: 8px 8px 8px 8px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg);
 }
+
+/* ── Top bar ── */
+.app__topbar {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 0 20px 0 14px;
+  border-bottom: 1px solid transparent;
+  background: var(--bg);
+  flex-shrink: 0;
+  gap: 10px;
+  z-index: 10;
+}
+html[data-mode="dark"] .app__topbar {
+  background: var(--bg);
+  border-bottom-color: transparent;
+}
+.app__topbar-toggle {
+  width: 30px; height: 30px;
+  border: none; background: none; cursor: pointer;
+  color: var(--text-3, #94a3b8);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 7px; transition: background .12s, color .12s;
+  flex-shrink: 0;
+}
+.app__topbar-toggle:hover {
+  background: var(--bg-2);
+  color: var(--text, #111);
+}
+html[data-mode="dark"] .app__topbar-toggle:hover {
+  background: #141418;
+  color: #d4d4db;
+}
+.app__topbar-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text, #111);
+  letter-spacing: -0.4px;
+  flex: 1;
+}
+html[data-mode="dark"] .app__topbar-title { color: #e8e8ed; }
+.app__topbar-right {
+  display: flex; align-items: center; gap: 4px;
+}
+.app__topbar-btn {
+  width: 28px; height: 28px;
+  border: none; background: none; cursor: pointer;
+  color: var(--text-3, #94a3b8);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; transition: background .12s, color .12s;
+}
+.app__topbar-btn:hover {
+  background: var(--bg-2);
+  color: var(--text, #111);
+}
+html[data-mode="dark"] .app__topbar-btn:hover {
+  background: #141418;
+  color: #d4d4db;
+}
+
 
 /* Standalone views (email, etc.) take the entire window */
 .app--standalone {
@@ -38,11 +103,11 @@
   width: 6px;
   z-index: 300;
   cursor: pointer;
-  background: linear-gradient(to right, rgba(99,102,241,0.35), transparent);
+  background: linear-gradient(to right, rgba(24,24,27,0.35), transparent);
   transition: opacity 0.2s;
 }
 .app__sidebar-trigger:hover {
-  background: linear-gradient(to right, rgba(99,102,241,0.6), transparent);
+  background: linear-gradient(to right, rgba(24,24,27,0.6), transparent);
 }
 
 /* Backdrop when sidebar is open */

@@ -11,24 +11,10 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       proxy: {
-        '/api/anthropic': {
-          target: 'https://api.anthropic.com',
+        // All /api calls → local Express server (server/index.js)
+        '/api': {
+          target: 'http://localhost:3001',
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/api\/anthropic/, ''),
-        },
-        // Groq proxy — injects the API key server-side (users never see it)
-        '/api/groq': {
-          target: 'https://api.groq.com',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/api\/groq/, ''),
-          configure: (proxy) => {
-            proxy.on('proxyReq', (proxyReq) => {
-              if (GROQ_KEY) {
-                // Override / set key from server env — frontend sends nothing
-                proxyReq.setHeader('Authorization', `Bearer ${GROQ_KEY}`)
-              }
-            })
-          },
         },
       },
     },

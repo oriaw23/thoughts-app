@@ -13,7 +13,7 @@
 .mtg3__clock { font-size:22px; font-weight:700; color:var(--text); font-family:monospace; letter-spacing:-1px; }
 .mtg3__new-btn {
   display:flex; align-items:center; gap:7px; padding:10px 20px; border:none;
-  border-radius:10px; background:var(--text); color:var(--bg);
+  border-radius:4px; background:var(--text); color:var(--bg);
   font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; transition:opacity .14s;
 }
 .mtg3__new-btn:hover { opacity:.85; }
@@ -38,7 +38,7 @@
 .mtg3__call-btns { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
 .mtg3__call-btn {
   flex:1; display:flex; align-items:center; gap:8px; padding:10px 12px;
-  border:1px solid var(--border); border-radius:10px; background:var(--bg);
+  border:1px solid var(--border); border-radius:4px; background:var(--bg);
   font-size:12.5px; font-weight:600; color:var(--text-2); cursor:pointer; font-family:inherit;
   transition:border-color .13s,background .13s,color .13s;
 }
@@ -70,7 +70,7 @@
 .mtg3__day-list { display:flex; flex-direction:column; gap:6px; }
 .mtg3__meeting-row {
   --mc: #3b82f6;
-  display:flex; align-items:center; gap:8px; padding:10px 10px; border-radius:10px;
+  display:flex; align-items:center; gap:8px; padding:10px 10px; border-radius:4px;
   border:1px solid transparent; cursor:pointer; transition:background .1s,border-color .1s;
 }
 .mtg3__meeting-row:hover { background:var(--bg); border-color:var(--border); }
@@ -99,7 +99,7 @@
 .mtg3__detail-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; color:var(--text-3); }
 .mtg3__detail-empty h3 { font-size:18px; font-weight:700; color:var(--text-2); }
 .mtg3__detail-empty p { font-size:13.5px; }
-.mtg3__detail-empty button { padding:10px 24px; background:var(--text); color:var(--bg); border:none; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; }
+.mtg3__detail-empty button { padding:10px 24px; background:var(--text); color:var(--bg); border:none; border-radius:4px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; }
 
 /* ══ Detail panel ══ */
 .mtg3__det { flex:1; display:flex; flex-direction:column; overflow:hidden; }
@@ -124,6 +124,9 @@
 .mtg3__plat-btn { padding:4px 9px; border-radius:7px; border:1px solid var(--border); background:none; font-size:11.5px; font-weight:600; color:var(--text-3); cursor:pointer; font-family:inherit; transition:all .12s; white-space:nowrap; }
 .mtg3__plat-btn:hover { background:var(--bg-2); }
 
+.mtg3__det-group { display:flex; align-items:center; gap:10px; padding:6px 0; }
+.mtg3__det-group label { font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.5px; flex-shrink:0; }
+.mtg3__det-group select { flex:1; padding:7px 10px; border:1.5px solid var(--border); border-radius:9px; background:var(--bg-2); outline:none; font-size:13px; color:var(--text); font-family:inherit; }
 .mtg3__det-link { display:flex; align-items:center; gap:8px; }
 .mtg3__det-link input { flex:1; padding:8px 12px; border:1.5px solid var(--border); border-radius:9px; background:var(--bg-2); outline:none; font-size:13px; color:var(--text-2); font-family:inherit; transition:border-color .14s; }
 .mtg3__det-link input:focus { border-color:var(--border-2); }
@@ -204,7 +207,7 @@
 .mtg3__actions { display:flex; flex-direction:column; gap:8px; }
 .mtg3__progress { height:5px; background:var(--bg-3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
 .mtg3__progress > div { height:100%; border-radius:3px; transition:width .3s; }
-.mtg3__todo { display:flex; align-items:center; gap:11px; padding:10px 13px; background:var(--bg-2); border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:background .1s; font-size:14px; color:var(--text); }
+.mtg3__todo { display:flex; align-items:center; gap:11px; padding:10px 13px; background:var(--bg-2); border:1px solid var(--border); border-radius:4px; cursor:pointer; transition:background .1s; font-size:14px; color:var(--text); }
 .mtg3__todo:hover { background:var(--bg-3); }
 .mtg3__todo.done { opacity:.55; }
 .mtg3__todo.done span { text-decoration:line-through; color:var(--text-3); }
@@ -226,21 +229,21 @@
 .mtg3__sum-li { margin-bottom:4px; padding-right:8px; }
 .mtg3__sum-empty { display:flex; flex-direction:column; align-items:center; gap:12px; padding:48px 0; text-align:center; }
 .mtg3__sum-empty p { font-size:14px; color:var(--text-3); }
-.mtg3__sum-empty button { padding:10px 24px; border:none; border-radius:10px; color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; transition:opacity .14s; }
+.mtg3__sum-empty button { padding:10px 24px; border:none; border-radius:4px; color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; transition:opacity .14s; }
 .mtg3__sum-empty button:hover:not(:disabled) { opacity:.88; }
 .mtg3__sum-empty button:disabled { opacity:.45; cursor:not-allowed; }
 
 /* ══ Drag-to-attach ══ */
 .mtg3__slot-card.drag-over {
-  border-color: #6366f1 !important;
-  background: rgba(99,102,241,.07) !important;
-  box-shadow: 0 0 0 2px rgba(99,102,241,.18);
+  border-color: #18181b !important;
+  background: rgba(24,24,27,.07) !important;
+  box-shadow: 0 0 0 2px rgba(24,24,27,.18);
 }
 .mtg3__drop-hint {
   text-align: center;
   font-size: 11px;
   font-weight: 600;
-  color: #6366f1;
+  color: #18181b;
   padding: 5px 0 3px;
   opacity: .75;
   letter-spacing: .2px;
@@ -260,11 +263,11 @@
   align-items: center;
   gap: 5px;
   padding: 3px 8px 3px 6px;
-  border-radius: 20px;
+  border-radius: 6px;
   font-size: 11.5px;
   font-weight: 500;
-  border: 1px solid color-mix(in srgb, var(--ac,#6366f1) 30%, transparent);
-  background: color-mix(in srgb, var(--ac,#6366f1) 9%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--ac,#18181b) 30%, transparent);
+  background: color-mix(in srgb, var(--ac,#18181b) 9%, var(--bg));
   color: var(--text);
   max-width: 220px;
   direction: ltr;
@@ -277,7 +280,7 @@
   text-decoration: none;
   color: inherit;
 }
-.mtg3__att-link a { color: var(--ac,#6366f1); }
+.mtg3__att-link a { color: var(--ac,#18181b); }
 .mtg3__att-link a:hover { text-decoration: underline; }
 .mtg3__att-rm {
   background: none;

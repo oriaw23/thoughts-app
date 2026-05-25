@@ -212,8 +212,8 @@
 }
 .cb-starter:hover {
   background: #eef2ff;
-  border-color: #6366f1;
-  color: #4338ca;
+  border-color: #18181b;
+  color: #111111;
   transform: translateX(-2px);
 }
 
@@ -243,7 +243,7 @@
 .cb-msg__bubble {
   max-width: 80%;
   padding: 10px 14px;
-  border-radius: 18px;
+  border-radius: 6px;
   font-size: 13.5px;
   line-height: 1.6;
   word-break: break-word;
@@ -281,7 +281,7 @@
 .cb-msg--user .cb-msg__bubble code { background: rgba(255,255,255,0.2); }
 .cb-msg__bubble pre {
   background: #0f172a; color: #e2e8f0;
-  padding: 10px 12px; border-radius: 10px;
+  padding: 10px 12px; border-radius: 4px;
   overflow-x: auto; margin: 8px 0; font-size: 12px;
 }
 .cb-msg__bubble pre code { background: none; padding: 0; color: inherit; }
@@ -290,7 +290,7 @@
 .cb-typing {
   display: flex; align-items: center; gap: 5px;
   padding: 12px 16px;
-  background: #f1f5f9; border-radius: 18px; border-bottom-right-radius: 5px;
+  background: #f1f5f9; border-radius: 6px; border-bottom-right-radius: 5px;
 }
 .cb-typing span {
   width: 7px; height: 7px; border-radius: 50%; background: #94a3b8;
@@ -307,7 +307,7 @@
 .cb-error {
   font-size: 12.5px; color: #dc2626;
   background: #fee2e2; padding: 8px 12px;
-  border-radius: 10px; direction: rtl;
+  border-radius: 4px; direction: rtl;
 }
 
 /* ── Input ── */
@@ -325,7 +325,7 @@
   flex: 1;
   padding: 9px 13px;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: 5px;
   font-size: 13.5px; font-family: inherit;
   color: #0f172a; direction: rtl;
   resize: none; outline: none;
@@ -341,7 +341,7 @@
 
 .cb-send-btn {
   width: 38px; height: 38px;
-  border-radius: 12px;
+  border-radius: 5px;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;

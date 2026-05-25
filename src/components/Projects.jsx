@@ -35,6 +35,7 @@ function newProject() {
   return {
     id: uuidv4(), name:'New Project', icon:'🗂️', color:'#6366f1',
     status:'planning', description:'', dueDate:'', progress:0, banner:'',
+    groupId: null,
     createdAt: new Date().toISOString(),
     tasks:[], goals:[], schedule:[], pageIds:[], goalIds:[], taskIds:[], eventIds:[],
   };
@@ -148,33 +149,24 @@ export default function Projects({ pages=[], tasks=[], events=[], goals=[], onNa
             const doneTasks   = intTasks.filter(t=>t.done).length;
             const linkedCount = (p.pageIds?.length||0)+(p.goalIds?.length||0)+(p.taskIds?.length||0)+(p.eventIds?.length||0);
             return (
-              <button key={p.id} className="pp-card" onClick={() => setOpen(p)}>
-                {/* Banner / colour header */}
-                <div className="pp-card-cover"
-                  style={p.banner
-                    ? { backgroundImage:`url(${p.banner})`, backgroundSize:'cover', backgroundPosition:'center' }
-                    : { background:`linear-gradient(135deg,${p.color}cc,${p.color}66)` }
-                  }
-                >
-                  <div className="pp-card-cover-overlay"/>
-                  <span className="pp-card-icon-lg">{p.icon}</span>
-                  <span className="pp-card-badge-cover"
-                    style={{color:status.color, background:status.color+'26', borderColor:status.color+'44'}}>
-                    {status.label}
-                  </span>
-                </div>
-                {/* Body */}
+              <button key={p.id} className="pp-card" onClick={() => setOpen(p)}
+                style={{'--pp-color': p.color}}>
                 <div className="pp-card-inner">
-                  <h3 className="pp-card-name">{p.name}</h3>
+                  <div className="pp-card-top">
+                    <span className="pp-card-icon">{p.icon}</span>
+                    <h3 className="pp-card-name">{p.name}</h3>
+                    <span className="pp-chip" style={{color:status.color,background:status.color+'15',borderColor:status.color+'33',flexShrink:0}}>
+                      {status.label}
+                    </span>
+                  </div>
                   {p.description && <p className="pp-card-desc">{p.description}</p>}
                   <div className="pp-card-prog">
                     <div className="pp-card-bar2"><div style={{width:(p.progress||0)+'%',background:p.color}}/></div>
                     <span style={{color:p.color}}>{p.progress||0}%</span>
                   </div>
                   <div className="pp-card-chips">
-                    {intTasks.length>0 && <span className="pp-chip">✅ {doneTasks}/{intTasks.length}</span>}
-                    {linkedCount>0   && <span className="pp-chip">🔗 {linkedCount}</span>}
-                    {p.dueDate       && <span className="pp-chip pp-chip-date">📅 {p.dueDate}</span>}
+                    {intTasks.length>0 && <span className="pp-chip">{doneTasks}/{intTasks.length} tasks</span>}
+                    {p.dueDate         && <span className="pp-chip pp-chip-date">{p.dueDate}</span>}
                   </div>
                 </div>
               </button>
@@ -189,15 +181,9 @@ export default function Projects({ pages=[], tasks=[], events=[], goals=[], onNa
             const intTasks  = p.tasks || [];
             const doneTasks = intTasks.filter(t=>t.done).length;
             return (
-              <button key={p.id} className="pp-row" onClick={() => setOpen(p)}>
-                {/* Thumbnail */}
-                <div className="pp-row-thumb"
-                  style={p.banner
-                    ? { backgroundImage:`url(${p.banner})`, backgroundSize:'cover', backgroundPosition:'center' }
-                    : { background:`linear-gradient(135deg,${p.color}bb,${p.color}77)` }
-                  }
-                >
-                  {!p.banner && <span className="pp-row-icon">{p.icon}</span>}
+              <button key={p.id} className="pp-row" onClick={() => setOpen(p)} style={{'--pp-color':p.color}}>
+                <div className="pp-row-thumb" style={{background:p.color+'18',borderColor:p.color+'33'}}>
+                  <span className="pp-row-icon">{p.icon}</span>
                 </div>
                 {/* Name + desc */}
                 <div className="pp-row-info">
@@ -695,6 +681,21 @@ function EditModal({ project, onSave, onClose }) {
               ))}
             </div>
           </div>
+
+          {/* Group */}
+          {(() => {
+            const groups = (() => { try { return JSON.parse(localStorage.getItem('mynotion_groups_v1')||'[]'); } catch { return []; } })();
+            if (!groups.length) return null;
+            return (
+              <div className="pm-field-group">
+                <p className="pm-field-label">Group</p>
+                <select className="pm-status-select" value={f.groupId||''} onChange={e=>set('groupId',e.target.value||null)}>
+                  <option value="">No group</option>
+                  {groups.map(g=><option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+              </div>
+            );
+          })()}
 
           {/* Due date + Progress */}
           <div className="pm-two-col">

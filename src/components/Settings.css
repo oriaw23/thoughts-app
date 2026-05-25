@@ -16,13 +16,13 @@
 .settings-theme-list { display: flex; flex-direction: column; gap: 14px; }
 .settings-theme-row {
   display: flex; flex-direction: column; gap: 6px;
-  background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 5px; padding: 12px 14px;
 }
 .settings-theme-view { font-size: 12px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: .5px; }
 .settings-theme-picks { display: flex; gap: 6px; flex-wrap: wrap; }
 .settings-theme-chip {
   display: flex; align-items: center; gap: 5px;
-  padding: 5px 11px; border-radius: 20px; border: 1.5px solid var(--border);
+  padding: 5px 11px; border-radius: 6px; border: 1.5px solid var(--border);
   background: var(--bg); cursor: pointer; font-family: inherit;
   font-size: 12px; color: var(--text-2); transition: all .13s;
 }
@@ -40,7 +40,7 @@
 .settings-mode-card {
   flex: 1;
   border: 2px solid var(--border);
-  border-radius: 14px;
+  border-radius: 5px;
   overflow: hidden;
   background: var(--bg);
   cursor: pointer;

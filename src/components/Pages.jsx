@@ -3,8 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import ProjectPicker from './ProjectPicker';
 import Chat from './Chat';
 import MeetingsPage from './MeetingsPage';
-import AIAgentsPage from './AIAgentsPage';
-import DocPage from './DocPage';
 import EmailPage from './EmailPage';
 import './Pages.css';
 
@@ -28,6 +26,7 @@ export function freshBlock(type = 'paragraph', text = '') {
   if (type === 'map')      { b.places = []; b.activeId = null; }
   if (type === 'journal')  { b.date = new Date().toISOString().slice(0,10); b.mood = null; }
   if (type === 'subpage')  { b.title = ''; b.icon = '📄'; b.content = ''; }
+  if (type === 'doc')      { b.title = ''; b.body = ''; b.open = true; }
   return b;
 }
 export function parseContent(raw) {
@@ -65,7 +64,7 @@ const TOOLBAR_GROUPS = [
   {items:[{type:'quote',icon:'"',label:'Quote'},{type:'code',icon:'</>',label:'Code'},{type:'callout',icon:'💡',label:'Callout'},{type:'divider',icon:'—',label:'Divider'}]},
   {items:[{type:'table',icon:'⊞',label:'Table'},{type:'board',icon:'⊟',label:'Board'},{type:'gallery',icon:'🖼',label:'Gallery'},{type:'timeline',icon:'⏱',label:'Timeline'},{type:'cards',icon:'▦',label:'Cards'}]},
   {items:[{type:'pageref',icon:'🔗',label:'Link Page'},{type:'subpage',icon:'📑',label:'Sub-page'}]},
-  {items:[{type:'map',icon:'🗺',label:'Map'},{type:'journal',icon:'📓',label:'Journal'}]},
+  {items:[{type:'map',icon:'🗺',label:'Map'},{type:'journal',icon:'📓',label:'Journal'},{type:'canvas',icon:'🎨',label:'Canvas'},{type:'email',icon:'✉',label:'Email'},{type:'doc',icon:'📝',label:'Doc'}]},
 ];
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -116,7 +115,7 @@ function fmtBytes(b) { if(b<1024) return b+'B'; if(b<1048576) return (b/1024).to
 
 // ── Main component ────────────────────────────────────────────────────────────
 const MEDIA_ID = '__media__';
-const AI_ID    = '__ai__';
+const HOME_ID  = '__home__';
 
 // ── Horizontal scroll track for split panes ───────────────────────────────────
 function PaneScrollTrack({ info, contentRowRef, splitCount }) {
@@ -179,6 +178,116 @@ function PaneScrollTrack({ info, contentRowRef, splitCount }) {
   );
 }
 
+// ── Vault Home Tab ────────────────────────────────────────────────────────────
+function WorkspaceHome({ pages = [], onSelectPage }) {
+  const [search, setSearch] = useState('');
+
+  const sorted   = [...pages].sort((a,b) =>
+    (b.updatedAt||b.createdAt||'') > (a.updatedAt||a.createdAt||'') ? 1 : -1
+  );
+  const filtered = search
+    ? sorted.filter(p => p.title?.toLowerCase().includes(search.toLowerCase()))
+    : sorted;
+  const pinned   = pages.filter(p => p.pinned);
+  const recent   = filtered.slice(0, 12);
+  const todayStr = new Date().toISOString().slice(0,10);
+  const todayCount = pages.filter(p => (p.updatedAt||p.createdAt||'').startsWith(todayStr)).length;
+
+  function fmtDate(iso) {
+    if(!iso) return '';
+    const d = new Date(iso), diff = Date.now() - d;
+    if(diff < 60000)    return 'Just now';
+    if(diff < 3600000)  return `${Math.floor(diff/60000)}m ago`;
+    if(diff < 86400000) return `${Math.floor(diff/3600000)}h ago`;
+    if(diff < 604800000)return `${Math.floor(diff/86400000)}d ago`;
+    return d.toLocaleDateString('en',{month:'short',day:'numeric'});
+  }
+
+  return (
+    <div className="vault-home">
+
+      {/* Full-bleed teal header */}
+      <div className="vault-home__header">
+        <div className="vault-home__header-glow"/>
+        <div className="vault-home__header-inner">
+          <div className="vault-home__header-text">
+            <h1 className="vault-home__title">Vault</h1>
+            <p className="vault-home__sub">
+              {pages.length} documents &nbsp;·&nbsp; {todayCount} edited today
+            </p>
+          </div>
+          {/* Search */}
+          <div className="vault-home__search-wrap">
+            <svg className="vault-home__search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input
+              className="vault-home__search"
+              placeholder="Search documents…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="vault-home__body">
+
+        {/* Pinned row */}
+        {pinned.length > 0 && !search && (
+          <section className="vault-home__section">
+            <div className="vault-home__section-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+              Pinned
+            </div>
+            <div className="vault-home__pinned-row">
+              {pinned.map(p => (
+                <button key={p.id} className="vault-home__pin-chip" onClick={() => onSelectPage(p.id)}>
+                  <span>{p.icon||'📄'}</span>
+                  <span>{p.title||'Untitled'}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* All / Recent documents */}
+        <section className="vault-home__section">
+          <div className="vault-home__section-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            {search ? `Results for "${search}"` : 'All documents'}
+          </div>
+
+          {recent.length === 0 ? (
+            <div className="vault-home__empty">
+              {search ? `No documents matching "${search}"` : 'No documents yet — create one from the sidebar'}
+            </div>
+          ) : (
+            <div className="vault-home__docs">
+              {recent.map((p, i) => (
+                <button
+                  key={p.id}
+                  className="vault-home__doc"
+                  onClick={() => onSelectPage(p.id)}
+                  style={{ animationDelay: `${i * 30}ms` }}
+                >
+                  <span className="vault-home__doc-icon">{p.icon||'📄'}</span>
+                  <div className="vault-home__doc-info">
+                    <span className="vault-home__doc-title">{p.title||'Untitled'}</span>
+                    <span className="vault-home__doc-meta">
+                      {p.folderId ? '📁 ' : ''}{fmtDate(p.updatedAt||p.createdAt)}
+                    </span>
+                  </div>
+                  <svg className="vault-home__doc-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
+
 export default function Pages({
   folders=[], pages=[], activePageId,
   onSelectPage, onCreatePage, onUpdatePage, onDeletePage,
@@ -187,9 +296,11 @@ export default function Pages({
 }) {
   const [iconPicker, setIconPicker] = useState(false);
   const [editingFolder, setEditingFolder] = useState(null);
-  const [panelOpen, setPanelOpen]   = useState(true);
-  const [sideOpen, setSideOpen]     = useState(false);
-  const [metaOpen, setMetaOpen]     = useState(true);
+  const [panelOpen, setPanelOpen]     = useState(true);
+  const [sideOpen, setSideOpen]       = useState(false);
+  const [metaOpen, setMetaOpen]       = useState(true);
+  const [blockPanelOpen, setBlockPanelOpen] = useState(false);
+  const [blockPanelSearch, setBlockPanelSearch] = useState('');
   const undoRedoRef = useRef({ undo: () => {}, redo: () => {} });
   const panelRef   = useRef(true);
   const closeTimer = useRef(null);
@@ -306,10 +417,7 @@ export default function Pages({
   const [showQB,     setShowQB]     = useState(false);
 
   const QV_ITEMS = [
-    { label:'Meetings',  color:'#10b981', view:'meetings'  },
-    { label:'AI Agents', color:'#3b82f6', view:'ai-agents' },
-    { label:'Doc',       color:'#f59e0b', view:'doc'       },
-    { label:'Email',     color:'#ef4444', view:'email'     },
+    { label:'Meetings', color:'#10b981', view:'meetings' },
   ];
 
   const openQuick = (view) => {
@@ -367,12 +475,11 @@ export default function Pages({
     el.scrollBy({ left: e.deltaY + e.deltaX, behavior: 'smooth' });
   }, []);
 
-  // Pointer drag: click+drag anywhere in the content row to scroll horizontally
+  // Pointer drag: click+drag anywhere in the content row to scroll horizontally (with momentum)
   const onContentRowPointerDown = useCallback((e) => {
     if (e.button !== 0) return;
     const el = contentRowRef.current;
     if (!el || el.scrollWidth <= el.clientWidth) return;
-    // Skip interactive targets
     const t = e.target;
     if (t.isContentEditable || t.closest('[contenteditable]')) return;
     if (t.closest('button, input, textarea, select, a')) return;
@@ -380,19 +487,32 @@ export default function Pages({
     const startX    = e.clientX;
     const startLeft = el.scrollLeft;
     let dragging = false;
+    let lastX = e.clientX;
+    let velocity = 0;
+    let raf = null;
 
     function onMove(me) {
       const dx = me.clientX - startX;
       if (!dragging && Math.abs(dx) < 5) return;
       dragging = true;
+      velocity = me.clientX - lastX;
+      lastX = me.clientX;
       el.scrollLeft = Math.max(0, Math.min(el.scrollWidth - el.clientWidth, startLeft - dx));
+    }
+    function coast() {
+      if (Math.abs(velocity) < 0.5) return;
+      el.scrollLeft -= velocity;
+      velocity *= 0.88;
+      raf = requestAnimationFrame(coast);
     }
     function onUp() {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup',   onUp);
+      if (dragging) { raf = requestAnimationFrame(coast); }
     }
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup',   onUp);
+    return () => { cancelAnimationFrame(raf); };
   }, []);
 
   // FLIP: record positions → reorder → animate from old to new
@@ -444,10 +564,10 @@ export default function Pages({
     window.addEventListener('mouseup', onUp);
   }, [paneWidths]);
 
-  const currentPage  = pages.find(p => p.id === activePageId) || null;
-  const ungrouped    = pages.filter(p => !p.folderId);
+  const currentPage   = pages.find(p => p.id === activePageId) || null;
+  const ungrouped     = pages.filter(p => !p.folderId);
   const isMediaActive = activeTabId === MEDIA_ID;
-  const isAIActive    = activeTabId === AI_ID;
+  const isHomeActive  = activeTabId === HOME_ID || activeTabId === null;
 
   // Keep tab titles in sync with page edits
   useEffect(() => {
@@ -655,6 +775,20 @@ export default function Pages({
             </div>
           </div>
 
+          {/* Canvas block */}
+          {onViewChange && (
+            <button className="pg__canvas-block" onClick={() => onViewChange('canvas')}>
+              <span className="pg__canvas-block-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="12" cy="12" r="2"/></svg>
+              </span>
+              <div className="pg__canvas-block-text">
+                <span className="pg__canvas-block-title">Canvas</span>
+                <span className="pg__canvas-block-sub">Visual whiteboard</span>
+              </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="pg__canvas-block-arrow"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          )}
+
           <div className="pg__panel-foot">
             <button className="pg__foot-btn" onClick={handleNewFolder}><IcoFolder /> New Folder</button>
             <button className="pg__foot-btn" onClick={() => handleNewPage(null)}><IcoPlus /> New Page</button>
@@ -673,10 +807,18 @@ export default function Pages({
         {/* Tab bar — permanent Sources tab + page tabs */}
         <div className={`pg__tabbar${panelOpen ? ' pg__tabbar--panel' : ''}`}>
 
+          {/* Permanent Home tab */}
+          <div
+            className={`pg__tab pg__tab--pinned${isHomeActive ? ' pg__tab--active' : ''}`}
+            onClick={() => setActiveTabId(HOME_ID)}
+          >
+            <span className="pg__tab-title">Vault</span>
+          </div>
+
           {/* Permanent Sources tab */}
           <div
             className={`pg__tab pg__tab--pinned${isMediaActive ? ' pg__tab--active' : ''}`}
-            onClick={() => setActiveTabId(t => t === MEDIA_ID ? (tabs[0]?.id || null) : MEDIA_ID)}
+            onClick={() => setActiveTabId(t => t === MEDIA_ID ? HOME_ID : MEDIA_ID)}
           >
             <span className="pg__tab-icon">📎</span>
             <span className="pg__tab-title">Sources</span>
@@ -881,7 +1023,7 @@ export default function Pages({
         <PaneScrollTrack info={scrollInfo} contentRowRef={contentRowRef} splitCount={splitPages.length} />
 
         {/* Content row: editor + optional media side panel */}
-        <div ref={contentRowRef} className={`pg__content-row${isMediaActive && panelOpen ? ' pg__content-row--panel' : ''}${isAIActive ? ' pg__content-row--ai' : ''}`}
+        <div ref={contentRowRef} className={`pg__content-row${isMediaActive && panelOpen ? ' pg__content-row--panel' : ''}`}
           onWheel={onContentRowWheel} onScroll={updateScrollInfo} onPointerDown={onContentRowPointerDown}>
 
           {/* Split-pane container */}
@@ -940,34 +1082,49 @@ export default function Pages({
                   {/* LEFT: undo / redo */}
                   {/* LEFT: meta-row + collapse */}
                   <div className="pg__topbar-left">
-                    <div className={`pg__meta-row${metaOpen ? '' : ' pg__meta-row--hidden'}`}>
-                      <ProjectPicker itemId={currentPage.id} field="pageIds" />
-                      <button
-                        className={`pg__topbar-btn pg__fav-btn${currentPage.favorite ? ' pg__fav-btn--on' : ''}`}
-                        onClick={() => onUpdatePage(currentPage.id, { favorite: !currentPage.favorite })}
-                        title={currentPage.favorite ? 'Remove from favorites' : 'Add to favorites'}
-                      ><IcoStar /></button>
-                      <button ref={priorityBtnRef} className="pg__topbar-btn pg__meta-btn"
-                        onClick={openPriority}
-                        style={currentPage.priority ? { color: PRIORITY_META[currentPage.priority]?.color } : {}}>
-                        {currentPage.priority
-                          ? <>{PRIORITY_META[currentPage.priority].dot} {PRIORITY_META[currentPage.priority].label}</>
-                          : 'Priority'}
+                    {metaOpen ? (
+                      <>
+                        <button className="pg__del-btn pg__meta-toggle" onClick={() => setMetaOpen(false)} title="Hide">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                          </svg>
+                        </button>
+                        {/* Add block button */}
+                        <button className="pg__topbar-addblock"
+                          onClick={() => setBlockPanelOpen(o => !o)}
+                          title="Add block">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                          Add block
+                        </button>
+                        <div className="pg__meta-row">
+                          <button className={`pg__topbar-btn${sideOpen?' active':''}`} onClick={() => setSideOpen(o=>!o)}>
+                            <IcoSide /> Notes
+                          </button>
+                          <button ref={groupBtnRef} className="pg__topbar-btn pg__meta-btn" onClick={openGroup}>
+                            {currentPage.groupId ? (groups.find(g=>g.id===currentPage.groupId)?.name || 'Group') : 'Group'}
+                          </button>
+                          <button ref={priorityBtnRef} className="pg__topbar-btn pg__meta-btn"
+                            onClick={openPriority}
+                            style={currentPage.priority ? { color: PRIORITY_META[currentPage.priority]?.color } : {}}>
+                            {currentPage.priority
+                              ? <>{PRIORITY_META[currentPage.priority].dot} {PRIORITY_META[currentPage.priority].label}</>
+                              : 'Priority'}
+                          </button>
+                          <button
+                            className={`pg__topbar-btn pg__fav-btn${currentPage.favorite ? ' pg__fav-btn--on' : ''}`}
+                            onClick={() => onUpdatePage(currentPage.id, { favorite: !currentPage.favorite })}
+                            title={currentPage.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                          ><IcoStar /></button>
+                          <ProjectPicker itemId={currentPage.id} field="pageIds" />
+                        </div>
+                      </>
+                    ) : (
+                      <button className="pg__meta-expand" onClick={() => setMetaOpen(true)} title="Show properties">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <polyline points="6 15 12 9 18 15"/>
+                        </svg>
                       </button>
-                      <button ref={groupBtnRef} className="pg__topbar-btn pg__meta-btn" onClick={openGroup}>
-                        🔗 {currentPage.groupId ? (groups.find(g=>g.id===currentPage.groupId)?.name || 'Group') : 'Group'}
-                      </button>
-                      <button className={`pg__topbar-btn${sideOpen?' active':''}`} onClick={() => setSideOpen(o=>!o)}>
-                        <IcoSide /> Notes
-                      </button>
-                    </div>
-                    <button className="pg__del-btn pg__meta-toggle" onClick={() => setMetaOpen(o=>!o)}
-                      title={metaOpen ? 'Hide' : 'Show'}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-                        style={{ transform: metaOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition:'transform .2s' }}>
-                        <polyline points="6 9 12 15 18 9"/>
-                      </svg>
-                    </button>
+                    )}
                   </div>
                   {/* RIGHT: undo/redo + trash */}
                   <div className="pg__topbar-right">
@@ -986,7 +1143,7 @@ export default function Pages({
                 </div>
 
                 <div className={`pg__split${sideOpen?' pg__split--open':''}`}>
-                  <div className="pg__writing">
+                  <div className={`pg__writing${splitPages.length > 0 ? ' pg__writing--split' : ''}`}>
                     {/* ── Cover (image or color) ── */}
                     {(currentPage.banner || currentPage.coverColor) && (
                       <div className="pg__banner"
@@ -1046,6 +1203,9 @@ export default function Pages({
                       <BlockEditor pageId={currentPage.id} content={currentPage.content||''}
                         onChange={val => onUpdatePage(currentPage.id,{content:val})}
                         pages={pages} onSelectPage={onSelectPage}
+                        onCreatePage={onCreatePage}
+                        onViewChange={onViewChange}
+                        sideOpen={sideOpen}
                         undoRedoRef={undoRedoRef}
                         onRegisterInsert={fn => { paneInsertRefs.current['main'] = fn; }}
                         getTargetInsert={() => {
@@ -1193,25 +1353,21 @@ export default function Pages({
                 </button>
               </div>
               <div className="pg__qsplit-body">
-                {quickSplit==='meetings'  && <MeetingsPage />}
-                {quickSplit==='ai-agents' && <AIAgentsPage />}
-                {quickSplit==='doc'       && <DocPage />}
-                {quickSplit==='email'     && <EmailPage />}
+                {quickSplit==='meetings' && <MeetingsPage />}
               </div>
             </div>
           )}
 
-          {/* Media side panel — when no quick view is covering the area */}
-          {isMediaActive && !quickView && (
-            <MediaPanel pages={pages} onClose={() => setActiveTabId(tabs[0]?.id || null)} />
+          {/* Home tab — Workspace overview */}
+          {isHomeActive && !quickView && (
+            <WorkspaceHome pages={pages} onSelectPage={(id) => { onSelectPage(id); }} />
           )}
 
-          {/* AI Chat — full panel when AI tab is active */}
-          {isAIActive && (
-            <div className="pg__ai-panel">
-              <Chat />
-            </div>
+          {/* Media side panel — when no quick view is covering the area */}
+          {isMediaActive && !quickView && (
+            <MediaPanel pages={pages} onClose={() => setActiveTabId(HOME_ID)} />
           )}
+
         </div>
       </div>
 
@@ -1230,10 +1386,7 @@ export default function Pages({
         >
           {/* Primary panel */}
           <div className="pg__qv-pane">
-            {quickView === 'meetings'  && <MeetingsPage />}
-            {quickView === 'ai-agents' && <AIAgentsPage />}
-            {quickView === 'doc'       && <DocPage />}
-            {quickView === 'email'     && <EmailPage />}
+            {quickView === 'meetings' && <MeetingsPage />}
           </div>
 
           {/* Secondary panel — opened by dropping a card onto the overlay */}
@@ -1244,10 +1397,7 @@ export default function Pages({
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
               </button>
-              {quickView2 === 'meetings'  && <MeetingsPage />}
-              {quickView2 === 'ai-agents' && <AIAgentsPage />}
-              {quickView2 === 'doc'       && <DocPage />}
-              {quickView2 === 'email'     && <EmailPage />}
+              {quickView2 === 'meetings' && <MeetingsPage />}
             </div>
           )}
         </div>
@@ -1258,6 +1408,53 @@ export default function Pages({
         <div className="pg__qv-media-pane">
           <MediaPanel pages={pages} onClose={() => setActiveTabId(tabs[0]?.id || null)} />
         </div>
+      )}
+
+      {/* ── Block panel (side drawer) ── */}
+      {blockPanelOpen && (
+        <>
+          <div className="pg__bp-backdrop" onClick={() => { setBlockPanelOpen(false); setBlockPanelSearch(''); }}/>
+          <div className="pg__bp">
+            <div className="pg__bp-head">
+              <span className="pg__bp-title">Add block</span>
+              <button className="pg__bp-close" onClick={() => { setBlockPanelOpen(false); setBlockPanelSearch(''); }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div className="pg__bp-search">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input autoFocus className="pg__bp-search-input" placeholder="Search blocks…"
+                value={blockPanelSearch} onChange={e => setBlockPanelSearch(e.target.value)} />
+              {blockPanelSearch && <button className="pg__bp-search-clear" onClick={() => setBlockPanelSearch('')}>✕</button>}
+            </div>
+            <div className="pg__bp-list">
+              {(() => {
+                const insert = (paneInsertRefs.current['main'] || (() => {}));
+                const allItems = TOOLBAR_GROUPS.flatMap(g => g.items);
+                const filtered = blockPanelSearch
+                  ? allItems.filter(i => i.label.toLowerCase().includes(blockPanelSearch.toLowerCase()))
+                  : null;
+                if (filtered) return filtered.map(item => (
+                  <button key={item.type} className="pg__bp-item" onClick={() => { insert(item.type); setBlockPanelOpen(false); setBlockPanelSearch(''); }}>
+                    <span className="pg__bp-item-icon">{item.icon}</span>
+                    <span className="pg__bp-item-label">{item.label}</span>
+                  </button>
+                ));
+                return TOOLBAR_GROUPS.map((grp, gi) => (
+                  <div key={gi} className="pg__bp-group">
+                    {grp.items.map(item => (
+                      <button key={item.type} className="pg__bp-item" onClick={() => { insert(item.type); setBlockPanelOpen(false); setBlockPanelSearch(''); }}>
+                        <span className="pg__bp-item-icon">{item.icon}</span>
+                        <span className="pg__bp-item-label">{item.label}</span>
+                      </button>
+                    ))}
+                    {gi < TOOLBAR_GROUPS.length - 1 && <div className="pg__bp-div"/>}
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        </>
       )}
 
       {/* Priority dropdown — fixed position to escape overflow */}
@@ -1744,14 +1941,19 @@ function FloatingPage({ page, pos, onMove, onClose, onUpdate, onSwitchToTab }) {
 let _blockMove = null; // { sourcePageId, blockId } — set by target on successful cross-page drop
 
 // ── Block editor ──────────────────────────────────────────────────────────────
-export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=null, undoRedoRef=null, noToolbar=false, onRegisterInsert=null, getTargetInsert=null, formatRef=null}) {
+export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=null, onCreatePage=null, undoRedoRef=null, noToolbar=false, onRegisterInsert=null, getTargetInsert=null, formatRef=null, onViewChange=null, sideOpen=false}) {
   const [blocks, setBlocks] = useState(() => parseContent(content));
   const prevId = useRef(pageId);
   const blockRefs = useRef({});
   const focusedId = useRef(null);
   const historyRef = useRef({ past: [], future: [] });
   const [selBar, setSelBar]       = useState(null);
+  const selDataRef = useRef(null);
+  const [linkPicker, setLinkPicker] = useState(null);
+  const [ctxMenu, setCtxMenu]     = useState(null); // { x, y, bid, word, wStart, wEnd, val }
   const [toolbarOpen, setToolbarOpen] = useState(false);
+  const [toolbarWrapped, setToolbarWrapped] = useState(false);
+  const tbRef = useRef(null);
   const [selected, setSelected]   = useState(new Set());
   const [blockSearch, setBlockSearch] = useState('');
   const [blockDragId,  setBlockDragId]  = useState(null);
@@ -1759,13 +1961,15 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
   const [slashMenu, setSlashMenu] = useState(null);
   const slashMenuRef = useRef(null);
 
-  // Track sidebar width → update CSS variable so toolbar stays visible
+  // Track sidebar + notes panel width → update CSS variable so toolbar stays visible
   useEffect(() => {
     const update = () => {
       const sb = document.querySelector('.sb');
+      const notes = document.querySelector('.pg__side-panel');
       if (sb) {
         const r = sb.getBoundingClientRect();
-        document.documentElement.style.setProperty('--toolbar-left', `${r.right + 14}px`);
+        const notesW = notes ? notes.getBoundingClientRect().width + 10 : 0;
+        document.documentElement.style.setProperty('--toolbar-left', `${r.right + 14 + notesW}px`);
       }
     };
     update();
@@ -1773,8 +1977,9 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
     if (!sb) return;
     const ro = new ResizeObserver(update);
     ro.observe(sb);
-    return () => ro.disconnect();
-  }, []);
+    window.addEventListener('resize', update);
+    return () => { ro.disconnect(); window.removeEventListener('resize', update); };
+  }, [sideOpen]); // re-run when notes panel opens/closes
 
   const toggleSelect = (id) => setSelected(prev => {
     const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n;
@@ -1925,38 +2130,166 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
   }, [onRegisterInsert]);
   const numIdx = (idx) => { let n=1; for(let i=idx-1;i>=0;i--) { if(blocks[i].type==='numbered')n++; else break; } return n; };
   const handleMouseUp = useCallback((e) => {
-    const ta=e.target.closest('textarea');
-    if(!ta||!ta.dataset.bid) { setSelBar(null); return; }
-    const ss=ta.selectionStart,se=ta.selectionEnd;
-    if(ss===se) { setSelBar(null); return; }
-    const rect=ta.getBoundingClientRect();
-    setSelBar({top:rect.top-50,left:Math.min(Math.max(rect.left+rect.width/2,180),window.innerWidth-180),bid:ta.dataset.bid,ta});
-  },[]);
+    const ta = e.target.closest('textarea');
+    if (!ta || !ta.dataset.bid) { selDataRef.current = null; setSelBar(null); return; }
+    const ss = ta.selectionStart, se = ta.selectionEnd;
+    if (ss === se) { selDataRef.current = null; setSelBar(null); return; }
+    // Store in REF immediately — no React re-render delay
+    selDataRef.current = { bid: ta.dataset.bid, ss, se, val: ta.value };
+    const rect = ta.getBoundingClientRect();
+    setSelBar({
+      top:  rect.top  - 52,
+      left: Math.min(Math.max(rect.left + rect.width / 2, 180), window.innerWidth - 200),
+    });
+  }, []);
+
   const applyInline = (fmt) => {
-    if(!selBar) return;
-    const ta=selBar.ta; if(!ta) return;
-    const ss=ta.selectionStart,se=ta.selectionEnd,val=ta.value,sel=val.slice(ss,se);
-    const w={bold:'**',italic:'*',strike:'~~',code:'`'}[fmt]; if(!w) return;
-    updateBlock(selBar.bid,{text:val.slice(0,ss)+w+sel+w+val.slice(se)}); setSelBar(null);
+    const d = selDataRef.current;
+    if (!d) return;
+    const { bid, ss, se, val } = d;
+    if (ss === se) return;
+    const sel = val.slice(ss, se);
+    const wrap = { bold:'**', italic:'*', strike:'~~', code:'`' }[fmt];
+    if (!wrap) return;
+    const before = val.slice(0, ss), after = val.slice(se);
+    const alreadyWrapped = before.endsWith(wrap) && after.startsWith(wrap);
+    const newText = alreadyWrapped
+      ? val.slice(0, ss - wrap.length) + sel + val.slice(se + wrap.length)
+      : before + wrap + sel + wrap + after;
+    updateBlock(bid, { text: newText });
+    selDataRef.current = null;
+    setSelBar(null);
+    document.activeElement?.blur();
   };
-  const applyType = (type) => { if(!selBar?.bid) return; updateBlock(selBar.bid,{type,done:type==='todo'?false:undefined}); setSelBar(null); };
+
+  const applyType = (type) => {
+    const d = selDataRef.current;
+    if (!d) return;
+    updateBlock(d.bid, { type, done: type === 'todo' ? false : undefined });
+    selDataRef.current = null;
+    setSelBar(null);
+  };
+
+  const openLinkPicker = () => {
+    const d = selDataRef.current;
+    if (!d) return;
+    const { bid, ss, se, val } = d;
+    const sel = val.slice(ss, se);
+    if (!sel) return;
+    setLinkPicker({ bid, ss, se, val, sel, top: selBar?.top || 100, left: selBar?.left || 400 });
+    selDataRef.current = null;
+    setSelBar(null);
+  };
+
+  // ── Context menu (right-click) ────────────────────────────────────────────
+  const handleContextMenu = useCallback((e) => {
+    const ta = e.target.closest('textarea');
+    if (!ta || !ta.dataset.bid) return;
+    e.preventDefault();
+    const pos = ta.selectionStart;
+    const val = ta.value;
+    // Find word boundaries around cursor
+    let start = pos, end = pos;
+    while (start > 0 && /\S/.test(val[start-1])) start--;
+    while (end < val.length && /\S/.test(val[end])) end++;
+    // Use selection if exists, otherwise detected word
+    const ss = ta.selectionStart, se = ta.selectionEnd;
+    const wStart = ss !== se ? ss : start;
+    const wEnd   = ss !== se ? se : end;
+    const word   = val.slice(wStart, wEnd).trim();
+    if (!word) return;
+    setCtxMenu({ x: e.clientX, y: e.clientY, bid: ta.dataset.bid, word, wStart, wEnd, val });
+  }, []);
+
+  const createPageLink = () => {
+    if (!ctxMenu || !onCreatePage) return;
+    const { bid, word, wStart, wEnd, val } = ctxMenu;
+    const newId = onCreatePage(null, { title: word, icon: '📄' });
+    const linked = `[${word}](page:${newId})`;
+    updateBlock(bid, { text: val.slice(0, wStart) + linked + val.slice(wEnd) });
+    // Blur active element → ParagraphBlock exits focused mode → shows rendered view
+    document.activeElement?.blur();
+    setCtxMenu(null);
+    if (onSelectPage) setTimeout(() => onSelectPage(newId), 80);
+  };
+
+  const insertLink = (pageId, pageTitle) => {
+    if (!linkPicker) return;
+    const { bid, ss, se, val, sel } = linkPicker;
+    const linked = `[${sel}](page:${pageId})`;
+    updateBlock(bid, { text: val.slice(0, ss) + linked + val.slice(se) });
+    setLinkPicker(null);
+  };
 
   return (
-    <div className="pg__block-editor" onMouseUp={handleMouseUp}>
-      {selBar && (
-        <div className="sel-toolbar" style={{top:selBar.top,left:selBar.left}} onMouseDown={e=>e.preventDefault()}>
-          <button className="sel-btn sel-h" onClick={() => applyType('heading1')}>H1</button>
-          <button className="sel-btn sel-h" onClick={() => applyType('heading2')}>H2</button>
-          <button className="sel-btn sel-h" onClick={() => applyType('heading3')}>H3</button>
+    <div className="pg__block-editor" onMouseUp={handleMouseUp}
+      onContextMenu={handleContextMenu}
+      onClick={e=>{ if (!e.target.closest('.sel-toolbar') && !e.target.closest('.ctx-menu')) { setSelBar(null); } if (!e.target.closest('.ctx-menu')) setCtxMenu(null); }}>
+      {selBar && selDataRef.current && (
+        <div className="sel-toolbar" style={{top:selBar.top,left:selBar.left}}
+          onMouseDown={e=>e.preventDefault()}>
+          <button className="sel-btn sel-h" onMouseDown={e=>e.preventDefault()} onClick={()=>applyType('heading1')}>H1</button>
+          <button className="sel-btn sel-h" onMouseDown={e=>e.preventDefault()} onClick={()=>applyType('heading2')}>H2</button>
+          <button className="sel-btn sel-h" onMouseDown={e=>e.preventDefault()} onClick={()=>applyType('heading3')}>H3</button>
           <div className="sel-sep"/>
-          <button className="sel-btn sel-b" onClick={() => applyInline('bold')}>B</button>
-          <button className="sel-btn sel-i" onClick={() => applyInline('italic')}>I</button>
-          <button className="sel-btn sel-s" onClick={() => applyInline('strike')}>S</button>
-          <button className="sel-btn" onClick={() => applyInline('code')}>&lt;/&gt;</button>
+          <button className="sel-btn sel-b" onMouseDown={e=>e.preventDefault()} onClick={()=>applyInline('bold')}><strong>B</strong></button>
+          <button className="sel-btn sel-i" onMouseDown={e=>e.preventDefault()} onClick={()=>applyInline('italic')}><em>I</em></button>
+          <button className="sel-btn sel-s" onMouseDown={e=>e.preventDefault()} onClick={()=>applyInline('strike')}><s>S</s></button>
+          <button className="sel-btn sel-code" onMouseDown={e=>e.preventDefault()} onClick={()=>applyInline('code')}>{'</>'}</button>
           <div className="sel-sep"/>
-          <button className="sel-btn" onClick={() => applyType('bullet')}>•</button>
-          <button className="sel-btn" onClick={() => applyType('quote')}>"</button>
+          <button className="sel-btn" onMouseDown={e=>e.preventDefault()} onClick={()=>applyType('bullet')}>•</button>
+          <button className="sel-btn" onMouseDown={e=>e.preventDefault()} onClick={()=>applyType('quote')}>"</button>
+          <div className="sel-sep"/>
+          <button className="sel-btn sel-link" onMouseDown={e=>e.preventDefault()} onClick={openLinkPicker} title="Link to page">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </button>
         </div>
+      )}
+
+      {/* Right-click context menu */}
+      {ctxMenu && (
+        <div className="ctx-menu" style={{ top: ctxMenu.y, left: ctxMenu.x }}
+          onMouseDown={e => e.stopPropagation()}>
+          <div className="ctx-menu__word">"{ctxMenu.word}"</div>
+          {onCreatePage && (
+            <button className="ctx-menu__item ctx-menu__item--link" onClick={createPageLink}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Create page for this word
+            </button>
+          )}
+          <button className="ctx-menu__item" onClick={() => {
+            selDataRef.current = { bid: ctxMenu.bid, ss: ctxMenu.wStart, se: ctxMenu.wEnd, val: ctxMenu.val };
+            setSelBar({ top: ctxMenu.y - 52, left: ctxMenu.x });
+            setCtxMenu(null);
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Link to existing page
+          </button>
+          <button className="ctx-menu__item" onClick={() => {
+            selDataRef.current = { bid: ctxMenu.bid, ss: ctxMenu.wStart, se: ctxMenu.wEnd, val: ctxMenu.val };
+            applyInline('bold'); setCtxMenu(null);
+          }}>
+            <strong>B</strong> Bold
+          </button>
+          <button className="ctx-menu__item" onClick={() => {
+            selDataRef.current = { bid: ctxMenu.bid, ss: ctxMenu.wStart, se: ctxMenu.wEnd, val: ctxMenu.val };
+            applyInline('italic'); setCtxMenu(null);
+          }}>
+            <em>I</em> Italic
+          </button>
+        </div>
+      )}
+
+      {/* Internal link picker */}
+      {linkPicker && (
+        <LinkPickerPopup
+          pages={pages}
+          top={linkPicker.top}
+          left={linkPicker.left}
+          selectedText={linkPicker.sel}
+          onSelect={insertLink}
+          onClose={() => setLinkPicker(null)}
+        />
       )}
       {/* Multi-select delete bar */}
       {selected.size > 0 && (
@@ -1976,7 +2309,7 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
           const isDropTarget = blockDropTgt?.id === block.id;
           return (
             <div key={block.id}
-              className={`block-wrap${selected.has(block.id) ? ' block-wrap--sel' : ''}${blockDragId===block.id ? ' block-wrap--dragging' : ''}`}
+              className={`block-wrap${selected.has(block.id) ? ' block-wrap--sel' : ''}${blockDragId===block.id ? ' block-wrap--dragging' : ''}${block.type !== 'paragraph' ? ' block-wrap--real' : ''}`}
               draggable
               onDragStart={e => {
                 _blockMove = null;
@@ -2049,15 +2382,22 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
                   onDelete={() => removeBlock(block.id)}
                   onFocus={() => { focusedId.current=block.id; }}
                   pages={pages} onSelectPage={onSelectPage}
+                  onViewChange={onViewChange}
                   onSlashCommand={(bId, query, rect) => {
                     if (bId) setSlashMenu(m => ({ blockId: bId, query, rect, selIdx: m?.blockId===bId ? m.selIdx||0 : 0 }));
                     else closeSlash();
                   }} />
               </div>
-              <button className="block-del-btn" title="Delete block"
-                onMouseDown={e => { e.preventDefault(); removeBlock(block.id); }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-              </button>
+              {block.type !== 'paragraph' && (
+                <button className="block-del-btn" title="Delete block"
+                  onMouseDown={e => { e.preventDefault(); removeBlock(block.id); }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </button>
+              )}
+              {/* Write-below zone for complex blocks */}
+              {!['paragraph','heading1','heading2','heading3','bullet','numbered','todo','quote','code','divider'].includes(block.type) && (
+                <div className="block-write-below" onClick={() => addAfter(block.id,'paragraph')} title="Click to write here" />
+              )}
               {/* Drop indicator — bottom */}
               {isDropTarget && blockDropTgt.side === 'after' && <div className="block-drop-line"/>}
             </div>
@@ -2111,7 +2451,8 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
           <span className="pg__toggle-label">Add block</span>
         </button>
         {/* Panel slides out to the right */}
-        <div className="pg__float-toolbar">
+        <div ref={tbRef} className={`pg__float-toolbar${toolbarWrapped?' pg__float-toolbar--wrap':''}`}
+          onScroll={e => { if (!toolbarWrapped && e.target.scrollLeft > 40) setToolbarWrapped(true); }}>
           {/* Search input */}
           <span className="pg__tb-search-wrap">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="pg__tb-search-ico"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2152,6 +2493,12 @@ export function BlockEditor({pageId, content, onChange, pages=[], onSelectPage=n
                 ))}
               </span>
             ))
+          )}
+          {/* Wrap toggle at end */}
+          {toolbarWrapped && (
+            <button className="pg__tb-wrap-btn" onMouseDown={e=>{e.preventDefault();setToolbarWrapped(false);if(tbRef.current)tbRef.current.scrollLeft=0;}} title="Single row">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+            </button>
           )}
         </div>
       </div>}
@@ -2302,7 +2649,172 @@ function SubpageBlock({ block, onUpdate, pages, onSelectPage }) {
 const AUTO_PAIRS = { '(': ')', '[': ']', '{': '}' };
 const CLOSE_CHARS = new Set([')', ']', '}']);
 
-function Block({block,numIdx,setRef,onUpdate,onAddAfter,onDelete,onFocus,pages=[],onSelectPage,onSlashCommand=null}) {
+// ── Doc block ─────────────────────────────────────────────────────────────────
+function DocBlock({ block, onUpdate }) {
+  const open   = block.open !== false;
+  const title  = block.title || '';
+  const body   = block.body  || '';
+
+  return (
+    <div className="doc-block">
+      <div className="doc-block__head">
+        <button className="doc-block__toggle" onClick={() => onUpdate({ open: !open })}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+            style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'transform .15s' }}>
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <input
+          className="doc-block__title"
+          value={title}
+          onChange={e => onUpdate({ title: e.target.value })}
+          placeholder="Document title…"
+          dir="auto"
+        />
+        <div className="doc-block__badge">Doc</div>
+      </div>
+      {open && (
+        <textarea
+          className="doc-block__body"
+          value={body}
+          onChange={e => onUpdate({ body: e.target.value })}
+          placeholder="Write your document content here… (supports plain text, notes, drafts)"
+          rows={6}
+          dir="auto"
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Email block ───────────────────────────────────────────────────────────────
+const EMAIL_KEY = 'thoughts_email_v2';
+const GRADIENTS_EB = [['#667eea','#764ba2'],['#f093fb','#f5576c'],['#4facfe','#00f2fe'],['#43e97b','#38f9d7'],['#fa709a','#fee140'],['#a18cd1','#fbc2eb']];
+function ebGrad(name) { const i=(name.charCodeAt(0)+(name.charCodeAt(1)||0))%GRADIENTS_EB.length; return `linear-gradient(135deg,${GRADIENTS_EB[i][0]},${GRADIENTS_EB[i][1]})`; }
+function ebInit(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+const DEMO_EB = [
+  { id:'d1', from:'Foldbase Team', subject:'Welcome to Foldbase', preview:"We're excited to have you here!", date:'10:30 AM', folder:'inbox', read:false, starred:true },
+  { id:'d2', from:'Sarah Cohen',   subject:'Q2 Project Update',   preview:'Everything is on track! Design phase complete.',  date:'9:15 AM',  folder:'inbox', read:false, starred:false },
+  { id:'d3', from:'David Levy',    subject:'Meeting tomorrow',    preview:'Confirming our meeting at 2pm.',  date:'Yesterday', folder:'inbox', read:true, starred:false },
+];
+
+function EmailBlock() {
+  const [emails]   = useState(() => { try { return JSON.parse(localStorage.getItem(EMAIL_KEY)||'null')||DEMO_EB; } catch { return DEMO_EB; } });
+  const [open, setOpen] = useState(false);
+  const [compose, setCompose] = useState(false);
+  const [sel, setSel]   = useState(null);
+  const [to, setTo]     = useState('');
+  const [sub, setSub]   = useState('');
+  const [body, setBody] = useState('');
+
+  const inbox = emails.filter(e => e.folder === 'inbox');
+  const unread = inbox.filter(e => !e.read).length;
+
+  if (!open) {
+    return (
+      <div className="eb__collapsed" onClick={() => setOpen(true)}>
+        <div className="eb__collapsed-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div className="eb__collapsed-info">
+          <span className="eb__collapsed-title">Email</span>
+          <span className="eb__collapsed-sub">{unread > 0 ? `${unread} unread` : 'No unread messages'}</span>
+        </div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{color:'var(--text-3)'}}><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className="eb">
+      {/* header */}
+      <div className="eb__head">
+        <div className="eb__head-left">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span className="eb__head-title">Email</span>
+          {unread > 0 && <span className="eb__badge">{unread}</span>}
+        </div>
+        <div className="eb__head-right">
+          <button className="eb__compose-btn" onClick={() => { setCompose(true); setSel(null); }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Compose
+          </button>
+          <button className="eb__collapse-btn" onClick={() => setOpen(false)}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {compose ? (
+        <div className="eb__compose">
+          <div className="eb__compose-field">
+            <label>To</label>
+            <input value={to} onChange={e=>setTo(e.target.value)} placeholder="recipient@email.com" dir="ltr"/>
+          </div>
+          <div className="eb__compose-field">
+            <label>Subject</label>
+            <input value={sub} onChange={e=>setSub(e.target.value)} placeholder="Subject…" dir="auto"/>
+          </div>
+          <textarea className="eb__compose-body" rows={5} value={body} onChange={e=>setBody(e.target.value)} placeholder="Write your message…" dir="auto"/>
+          <div className="eb__compose-foot">
+            <button className="eb__compose-cancel" onClick={() => { setCompose(false); setTo(''); setSub(''); setBody(''); }}>Cancel</button>
+            <button className="eb__compose-send" onClick={() => { setCompose(false); setTo(''); setSub(''); setBody(''); }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send
+            </button>
+          </div>
+        </div>
+      ) : sel ? (
+        <div className="eb__view">
+          <button className="eb__back" onClick={() => setSel(null)}>← Back</button>
+          <div className="eb__view-head">
+            <div className="eb__av" style={{background: ebGrad(sel.from)}}>{ebInit(sel.from)}</div>
+            <div>
+              <p className="eb__view-from">{sel.from}</p>
+              <p className="eb__view-sub">{sel.subject}</p>
+            </div>
+          </div>
+          <p className="eb__view-body">{sel.preview}</p>
+        </div>
+      ) : (
+        <div className="eb__list">
+          {inbox.length === 0 && <p className="eb__empty">Inbox is empty.</p>}
+          {inbox.map(e => (
+            <div key={e.id} className={`eb__row${!e.read?' eb__row--unread':''}`} onClick={() => setSel(e)}>
+              <div className="eb__av" style={{background: ebGrad(e.from)}}>{ebInit(e.from)}</div>
+              <div className="eb__row-body">
+                <div className="eb__row-top">
+                  <span className="eb__row-from">{e.from}</span>
+                  <span className="eb__row-date">{e.date}</span>
+                </div>
+                <span className="eb__row-sub">{e.subject}</span>
+                <span className="eb__row-prev">{e.preview}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CanvasBlock({ onViewChange }) {
+  return (
+    <button className="block-canvas-btn" onClick={() => onViewChange?.('canvas')}>
+      <span className="block-canvas-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="12" cy="12" r="2"/></svg>
+      </span>
+      <div className="block-canvas-text">
+        <span className="block-canvas-title">Canvas</span>
+        <span className="block-canvas-sub">Open visual whiteboard</span>
+      </div>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  );
+}
+
+function Block({block,numIdx,setRef,onUpdate,onAddAfter,onDelete,onFocus,pages=[],onSelectPage,onSlashCommand=null,onViewChange=null}) {
   const kd = (e) => {
     const ta = e.target;
 
@@ -2374,9 +2886,9 @@ function Block({block,numIdx,setRef,onUpdate,onAddAfter,onDelete,onFocus,pages=[
     return base;
   };
   if(block.type==='divider') return <hr className="block-hr"/>;
-  if(block.type==='heading1') return <div className="block-row"><div className="block-type-tag">H1</div><textarea {...ta('ta-h1','Heading 1...')}/></div>;
-  if(block.type==='heading2') return <div className="block-row"><div className="block-type-tag">H2</div><textarea {...ta('ta-h2','Heading 2...')}/></div>;
-  if(block.type==='heading3') return <div className="block-row"><div className="block-type-tag">H3</div><textarea {...ta('ta-h3','Heading 3...')}/></div>;
+  if(block.type==='heading1') return <HeadingBlock block={block} cls="ta-h1" tag="H1" ta={ta}/>;
+  if(block.type==='heading2') return <HeadingBlock block={block} cls="ta-h2" tag="H2" ta={ta}/>;
+  if(block.type==='heading3') return <HeadingBlock block={block} cls="ta-h3" tag="H3" ta={ta}/>;
   if(block.type==='bullet')   return <div className="block-row block-list-row"><span className="block-prefix block-bullet-dot">•</span><textarea {...ta('ta-p','List item...')}/></div>;
   if(block.type==='numbered') return <div className="block-row block-list-row"><span className="block-prefix block-num">{numIdx}.</span><textarea {...ta('ta-p','List item...')}/></div>;
   if(block.type==='todo')     return <div className="block-row block-list-row"><input type="checkbox" className="block-check" checked={!!block.done} onChange={e=>onUpdate({done:e.target.checked})}/><textarea {...ta(`ta-p${block.done?' ta-done':''}`, 'To-do...')}/></div>;
@@ -2392,9 +2904,162 @@ function Block({block,numIdx,setRef,onUpdate,onAddAfter,onDelete,onFocus,pages=[
   if(block.type==='map')      return <MapBlock block={block} onUpdate={onUpdate}/>;
   if(block.type==='journal')  return <JournalBlock block={block} onUpdate={onUpdate} blockRef={setRef} onFocus={onFocus}/>;
   if(block.type==='subpage')  return <SubpageBlock block={block} onUpdate={onUpdate} pages={pages} onSelectPage={onSelectPage}/>;
-  return <div className="block-row"><textarea {...ta('ta-p','Write something… (# heading, - bullet, 1. numbered)')}/></div>;
+  if(block.type==='canvas')   return <CanvasBlock onViewChange={onViewChange}/>;
+  if(block.type==='email')    return <EmailBlock />;
+  if(block.type==='doc')      return <DocBlock block={block} onUpdate={onUpdate}/>;
+  return <ParagraphBlock block={block} taProps={ta('ta-p','Write something… (# heading, - bullet, 1. numbered)')} onFocus={onFocus} onSelectPage={onSelectPage}/>;
 }
 function autoGrow(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+
+// ── Inline markdown renderer ───────────────────────────────────────────────────
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderInline(raw, onSelectPage) {
+  if (!raw) return '';
+  let s = escHtml(raw);
+  // Internal page links [text](page:id)
+  s = s.replace(/\[([^\]]+)\]\(page:([^)]+)\)/g, (_, txt, id) =>
+    `<a class="inline-page-link" data-pageid="${id}" href="#">${txt}</a>`
+  );
+  // Bold
+  s = s.replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>');
+  s = s.replace(/__(.+?)__/gs,     '<strong>$1</strong>');
+  // Italic
+  s = s.replace(/\*(.+?)\*/gs,    '<em>$1</em>');
+  s = s.replace(/_(.+?)_/gs,      '<em>$1</em>');
+  // Strikethrough
+  s = s.replace(/~~(.+?)~~/gs,    '<s>$1</s>');
+  // Inline code
+  s = s.replace(/`(.+?)`/g,       '<code class="inline-code">$1</code>');
+  // Line breaks
+  s = s.replace(/\n/g, '<br>');
+  return s;
+}
+function hasInlineFormat(text) {
+  return /\*\*|__|\*|_|~~|`|\[.*\]\(page:/.test(text||'');
+}
+function handleInlineClick(e, onSelectPage) {
+  const link = e.target.closest('.inline-page-link');
+  if (!link || !onSelectPage) return;
+  e.preventDefault(); e.stopPropagation();
+  onSelectPage(link.dataset.pageid);
+}
+
+// ── Link picker popup ─────────────────────────────────────────────────────────
+function LinkPickerPopup({ pages, top, left, selectedText, onSelect, onClose }) {
+  const [query, setQuery] = useState('');
+  const inputRef = useRef(null);
+  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => {
+    const close = e => { if (!e.target.closest('.link-picker')) onClose(); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [onClose]);
+
+  const filtered = pages.filter(p =>
+    !query || (p.title||'Untitled').toLowerCase().includes(query.toLowerCase())
+  ).slice(0, 12);
+
+  return (
+    <div className="link-picker" style={{
+      top: Math.min(top + 8, window.innerHeight - 280),
+      left: Math.min(Math.max(left - 130, 16), window.innerWidth - 300),
+    }}>
+      <div className="link-picker__head">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span>Link to page</span>
+      </div>
+      <div className="link-picker__search">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input ref={inputRef} className="link-picker__input" placeholder="Search pages…"
+          value={query} onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => { if (e.key==='Escape') onClose(); if (e.key==='Enter' && filtered[0]) onSelect(filtered[0].id, filtered[0].title||'Untitled'); }} />
+      </div>
+      <div className="link-picker__list">
+        {filtered.length === 0
+          ? <p className="link-picker__empty">No pages found</p>
+          : filtered.map(p => (
+              <button key={p.id} className="link-picker__item" onClick={() => onSelect(p.id, p.title||'Untitled')}>
+                <span className="link-picker__item-icon">{p.icon || '📄'}</span>
+                <span className="link-picker__item-title">{p.title || 'Untitled'}</span>
+              </button>
+            ))
+        }
+      </div>
+      {selectedText && (
+        <div className="link-picker__preview">
+          "{selectedText}" → selected page
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Heading with inline rendering ─────────────────────────────────────────────
+function HeadingBlock({ block, cls, tag, ta }) {
+  const taRef = useRef(null);
+  const [focused, setFocused] = useState(false);
+  const ph = { 'ta-h1':'Heading 1...', 'ta-h2':'Heading 2...', 'ta-h3':'Heading 3...' }[cls];
+  const showRendered = hasInlineFormat(block.text) && !focused;
+
+  if (showRendered) {
+    return (
+      <div className="block-row">
+        <div className="block-type-tag">{tag}</div>
+        <p className={`block-heading-rendered ${cls}`} dir="auto"
+          onClick={e => { if (!e.target.closest('.inline-page-link')) { setFocused(true); setTimeout(()=>taRef.current?.focus(),10); } }}
+          dangerouslySetInnerHTML={{ __html: renderInline(block.text) }}
+        />
+      </div>
+    );
+  }
+  const taObj = ta(cls, ph);
+  return (
+    <div className="block-row">
+      <div className="block-type-tag">{tag}</div>
+      <textarea
+        {...taObj}
+        ref={el => { taRef.current = el; taObj.ref?.(el); }}
+        onFocus={e => { setFocused(true); taObj.onFocus?.(e); }}
+        onBlur={() => setFocused(false)}
+      />
+    </div>
+  );
+}
+
+// ── Paragraph with inline rendering ───────────────────────────────────────────
+function ParagraphBlock({ block, taProps, onFocus, onSelectPage }) {
+  const taRef = useRef(null);
+  const [focused, setFocused] = useState(false);
+
+  const showRendered = hasInlineFormat(block.text) && !focused;
+
+  if (showRendered) {
+    return (
+      <div className="block-row">
+        <p className="block-para-rendered" dir="auto"
+          onClick={e => {
+            const link = e.target.closest('.inline-page-link');
+            if (link) { e.preventDefault(); onSelectPage?.(link.dataset.pageid); return; }
+            setFocused(true);
+            setTimeout(() => { taRef.current?.focus(); }, 10);
+          }}
+          dangerouslySetInnerHTML={{ __html: renderInline(block.text) || '<span class="block-ta-placeholder">Write something…</span>' }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="block-row">
+      <textarea
+        {...taProps}
+        ref={el => { taRef.current = el; taProps.ref?.(el); }}
+        onFocus={e => { setFocused(true); taProps.onFocus?.(e); onFocus?.(e); }}
+        onBlur={() => setFocused(false)}
+      />
+    </div>
+  );
+}
 
 // ── Page reference block ───────────────────────────────────────────────────────
 function PageRefBlock({ block, pages, onUpdate, onSelectPage, onFocus }) {

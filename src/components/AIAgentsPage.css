@@ -30,7 +30,7 @@
 .aai__hd-who { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
 .aai__hd-role { color: #94a3b8; font-weight: 400; font-size: 12px; }
 .aai__hd-clear {
-  padding: 5px 14px; border-radius: 20px; border: 1px solid #e2e8f0;
+  padding: 5px 14px; border-radius: 6px; border: 1px solid #e2e8f0;
   background: none; font-size: 12px; font-weight: 600; color: #64748b;
   cursor: pointer; font-family: inherit; transition: all .14s;
 }
@@ -65,7 +65,7 @@
 /* Suggestion tags */
 .aai__tags { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
 .aai__tag {
-  padding: 7px 16px; border-radius: 20px;
+  padding: 7px 16px; border-radius: 6px;
   border: 1px solid color-mix(in srgb, var(--ac) 28%, #e2e8f0);
   background: color-mix(in srgb, var(--ac) 5%, #fff);
   color: var(--ac, #1d4ed8); font-size: 12.5px; font-weight: 600;
@@ -84,7 +84,7 @@
 .aai__msg-av { flex-shrink: 0; }
 
 .aai__bubble {
-  max-width: 72%; padding: 11px 16px; border-radius: 20px;
+  max-width: 72%; padding: 11px 16px; border-radius: 6px;
   font-size: 14px; line-height: 1.7; word-break: break-word;
   background: #f1f5f9; color: #1e293b; border: 1px solid #f0f4f8;
 }
@@ -94,7 +94,7 @@
 .aai__typing {
   display: flex; gap: 5px; align-items: center;
   padding: 13px 17px; background: #f1f5f9;
-  border-radius: 20px; border-bottom-left-radius: 5px; border: 1px solid #f0f4f8;
+  border-radius: 6px; border-bottom-left-radius: 5px; border: 1px solid #f0f4f8;
 }
 .aai__typing span {
   width: 7px; height: 7px; border-radius: 50%; background: #93c5fd;
@@ -108,7 +108,7 @@
 }
 .aai__error {
   align-self: center; font-size: 13px; color: #ef4444;
-  background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 10px 18px;
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 5px; padding: 10px 18px;
 }
 
 /* ══ Bottom bar — always mounted, textarea ref never lost ══ */
@@ -124,7 +124,7 @@
 .aai__input-shell {
   width: 100%; max-width: 640px;
   display: flex; align-items: flex-end; gap: 8px;
-  background: #fff; border: 1.5px solid #e2e8f0; border-radius: 20px;
+  background: #fff; border: 1.5px solid #e2e8f0; border-radius: 6px;
   padding: 12px 12px 12px 18px;
   box-shadow: 0 2px 20px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.03);
   transition: border-color .18s, box-shadow .18s;
@@ -141,7 +141,7 @@
 }
 .aai__input::placeholder { color: #94a3b8; }
 .aai__send {
-  width: 38px; height: 38px; border-radius: 12px; border: none;
+  width: 38px; height: 38px; border-radius: 5px; border: none;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; align-self: flex-end;
   transition: opacity .14s, transform .12s;
@@ -221,7 +221,7 @@
 .aai__sb-nm { font-size: 13px; font-weight: 700; color: #111827; }
 .aai__sb-cnt {
   font-size: 10px; font-weight: 700; background: var(--ac); color: #fff;
-  padding: 1px 6px; border-radius: 10px; flex-shrink: 0;
+  padding: 1px 6px; border-radius: 4px; flex-shrink: 0;
 }
 .aai__sb-prev { font-size: 11.5px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 

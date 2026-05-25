@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foldbase — The workspace built for creators who mean business</title>
+  <title>Foldbase — Legal Automation for In-House Teams</title>
+  <meta name="description" content="Automate WhatsApp intake, draft legal documents with AI, manage matters, and route clients to the right doc — all in one platform built for in-house legal teams." />
   <link rel="icon" href="icon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -17,13 +18,12 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── TOKENS ── */
     :root {
+      --accent: #6366f1;
+      --accent2: #22c55e;
+      --gold:   #eab308;
       --red:    #ef4444;
-      --yellow: #eab308;
-      --green:  #22c55e;
-      --blue:   #3b82f6;
-      --card:   #101010;
+      --card:   #0e0e0e;
       --border: rgba(255,255,255,.07);
       --text-2: rgba(255,255,255,.5);
       --text-3: rgba(255,255,255,.28);
@@ -34,14 +34,11 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       padding: 16px 40px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(8,8,8,.8);
+      background: rgba(8,8,8,.85);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
-    .nav-logo {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none;
-    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-logo img { width: 28px; height: 28px; border-radius: 7px; }
     .nav-logo span { font-size: 16px; font-weight: 700; color: #fff; }
     .nav-links { display: flex; align-items: center; gap: 8px; }
@@ -54,11 +51,11 @@
     .nav-cta {
       padding: 8px 18px; border-radius: 9px; text-decoration: none;
       font-size: 13.5px; font-weight: 600; color: #fff;
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(99,102,241,.2);
+      border: 1px solid rgba(99,102,241,.4);
       transition: all .15s;
     }
-    .nav-cta:hover { background: rgba(255,255,255,.16); }
+    .nav-cta:hover { background: rgba(99,102,241,.3); }
 
     /* ── HERO ── */
     .hero {
@@ -69,60 +66,59 @@
       padding: 120px 24px 80px;
       position: relative; overflow: hidden;
     }
-    /* Colour orbs — very subtle */
     .hero::before {
       content: '';
-      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-      width: 800px; height: 600px; border-radius: 50%;
+      position: absolute; top: -160px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 700px; border-radius: 50%;
       background: radial-gradient(ellipse,
-        rgba(239,68,68,.08) 0%,
-        rgba(234,179,8,.06) 25%,
-        rgba(34,197,94,.06) 50%,
-        rgba(59,130,246,.08) 75%,
+        rgba(99,102,241,.1) 0%,
+        rgba(34,197,94,.07) 35%,
+        rgba(234,179,8,.05) 65%,
         transparent 100%
       );
       pointer-events: none;
     }
+
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 6px 14px; border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.1);
-      background: rgba(255,255,255,.04);
-      font-size: 12px; font-weight: 600; color: var(--text-2);
+      border: 1px solid rgba(99,102,241,.3);
+      background: rgba(99,102,241,.08);
+      font-size: 12px; font-weight: 600;
+      color: rgba(165,167,255,.9);
       margin-bottom: 28px; letter-spacing: .3px;
     }
-    .hero-badge-dots { display: flex; gap: 4px; }
-    .hero-badge-dots span {
-      width: 6px; height: 6px; border-radius: 50%;
+    .hero-badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s ease-in-out infinite;
     }
-    .hero-badge-dots span:nth-child(1) { background: var(--red); }
-    .hero-badge-dots span:nth-child(2) { background: var(--yellow); }
-    .hero-badge-dots span:nth-child(3) { background: var(--green); }
-    .hero-badge-dots span:nth-child(4) { background: var(--blue); }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
 
     .hero h1 {
-      font-size: clamp(40px, 7vw, 80px);
-      font-weight: 900; line-height: 1.05; letter-spacing: -2.5px;
-      color: #fff; margin-bottom: 20px; max-width: 900px;
+      font-size: clamp(38px, 6.5vw, 76px);
+      font-weight: 900; line-height: 1.06; letter-spacing: -2.5px;
+      color: #fff; margin-bottom: 20px; max-width: 860px;
     }
     .hero h1 em {
       font-style: normal;
-      background: linear-gradient(90deg, var(--red), var(--yellow), var(--green), var(--blue));
+      background: linear-gradient(90deg, #818cf8, #6366f1 30%, #22c55e 65%, #eab308);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
+
     .hero-sub {
-      font-size: clamp(16px, 2vw, 20px); color: var(--text-2);
-      max-width: 560px; line-height: 1.65; margin-bottom: 44px;
-      font-weight: 400;
+      font-size: clamp(15px, 2vw, 19px); color: var(--text-2);
+      max-width: 560px; line-height: 1.65; margin-bottom: 44px; font-weight: 400;
     }
+
     .hero-btns { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .btn-primary {
       display: flex; align-items: center; gap: 9px;
       padding: 14px 28px; border-radius: 12px; text-decoration: none;
-      font-size: 15px; font-weight: 700; color: #fff;
+      font-size: 15px; font-weight: 700;
       background: #fff; color: #080808;
       transition: all .16s;
-      box-shadow: 0 0 0 0 rgba(255,255,255,.2);
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,255,255,.15); }
     .btn-secondary {
@@ -134,18 +130,18 @@
     .btn-secondary:hover { color: #fff; border-color: rgba(255,255,255,.18); }
     .hero-note { margin-top: 18px; font-size: 12.5px; color: var(--text-3); }
 
-    /* ── PLATFORMS ── */
-    .platforms {
+    /* ── TRUST BAR ── */
+    .trust-bar {
       padding: 20px 40px 60px;
       display: flex; flex-direction: column; align-items: center; gap: 20px;
     }
-    .platforms-label { font-size: 12px; color: var(--text-3); letter-spacing: .8px; text-transform: uppercase; font-weight: 600; }
-    .platforms-row { display: flex; align-items: center; gap: 36px; flex-wrap: wrap; justify-content: center; }
-    .platform-tag {
+    .trust-label { font-size: 12px; color: var(--text-3); letter-spacing: .8px; text-transform: uppercase; font-weight: 600; }
+    .trust-row { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; justify-content: center; }
+    .trust-tag {
       font-size: 14px; font-weight: 600; color: var(--text-3);
       display: flex; align-items: center; gap: 7px;
     }
-    .platform-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .trust-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
     /* ── SECTION SHARED ── */
     section { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
@@ -154,7 +150,7 @@
       text-transform: uppercase; margin-bottom: 16px;
     }
     .section-title {
-      font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+      font-size: clamp(26px, 3.8vw, 42px); font-weight: 800;
       letter-spacing: -1.2px; color: #fff; line-height: 1.15;
       margin-bottom: 16px;
     }
@@ -163,7 +159,7 @@
     /* ── FEATURES GRID ── */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1px;
       background: var(--border);
       border: 1px solid var(--border);
@@ -173,28 +169,27 @@
     }
     .feature-card {
       background: var(--card);
-      padding: 32px 28px;
+      padding: 30px 26px;
       transition: background .15s;
-      position: relative;
     }
-    .feature-card:hover { background: #141414; }
+    .feature-card:hover { background: #131313; }
     .feature-icon {
       width: 42px; height: 42px; border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px; margin-bottom: 18px; flex-shrink: 0;
+      font-size: 20px; margin-bottom: 16px;
     }
-    .feature-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-    .feature-desc { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+    .feature-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .feature-desc { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
     .feature-tag {
       display: inline-flex; align-items: center; gap: 5px;
-      margin-top: 14px; font-size: 11px; font-weight: 700;
-      letter-spacing: .5px; text-transform: uppercase; opacity: .7;
+      margin-top: 14px; font-size: 10.5px; font-weight: 700;
+      letter-spacing: .5px; text-transform: uppercase; opacity: .75;
     }
 
     /* ── BIG FEATURE ── */
     .big-feature {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 80px; align-items: center;
+      gap: 72px; align-items: center;
       padding: 100px 40px;
       max-width: 1100px; margin: 0 auto;
     }
@@ -204,8 +199,8 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 28px;
-      min-height: 320px;
+      padding: 24px;
+      min-height: 300px;
       display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden;
     }
@@ -215,75 +210,149 @@
       background: radial-gradient(ellipse at 50% 0%, var(--glow,.3) 0%, transparent 60%);
       opacity: .4;
     }
-    /* Mock UI inside feature visual */
-    .mock-calendar { width: 100%; }
-    .mock-row {
-      display: flex; gap: 6px; margin-bottom: 6px;
-    }
-    .mock-cell {
-      flex: 1; padding: 8px 10px; border-radius: 8px;
-      font-size: 11px; font-weight: 600; color: #fff;
-    }
-    .mock-day-label {
-      flex: 1; text-align: center; font-size: 10px;
-      font-weight: 700; color: var(--text-3); letter-spacing: .5px;
-      text-transform: uppercase;
-    }
-    .mock-chip {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 5px 10px; border-radius: 6px;
-      font-size: 11px; font-weight: 600;
-      margin-bottom: 4px; width: 100%;
-    }
-    .mock-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-    /* Revenue mock */
-    .mock-revenue { width: 100%; }
-    .mock-stat {
-      padding: 16px; background: rgba(255,255,255,.04); border-radius: 12px;
+    /* WhatsApp mock */
+    .mock-wa { width: 100%; position: relative; z-index: 1; }
+    .mock-wa-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: rgba(37,211,102,.07);
+      border: 1px solid rgba(37,211,102,.18);
+      border-radius: 10px 10px 0 0;
+      margin-bottom: 0;
+    }
+    .mock-wa-dot { width: 8px; height: 8px; border-radius: 50%; background: #25d366; box-shadow: 0 0 6px #25d366; }
+    .mock-wa-name { font-size: 12px; font-weight: 700; color: #25d366; }
+    .mock-wa-status { font-size: 10px; color: rgba(37,211,102,.6); margin-left: auto; }
+    .mock-wa-msgs {
+      background: rgba(0,0,0,.3);
+      border: 1px solid rgba(37,211,102,.1);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 12px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .mock-wa-msg {
+      padding: 8px 11px; border-radius: 8px;
+      font-size: 12px; line-height: 1.5; max-width: 85%;
+    }
+    .mock-wa-msg--in {
+      background: rgba(255,255,255,.07);
+      color: rgba(255,255,255,.7);
+      align-self: flex-start;
+    }
+    .mock-wa-msg--out {
+      background: rgba(37,211,102,.12);
+      border: 1px solid rgba(37,211,102,.2);
+      color: rgba(255,255,255,.85);
+      align-self: flex-end;
+    }
+    .mock-wa-time { font-size: 9px; color: rgba(255,255,255,.3); margin-top: 2px; text-align: right; }
+
+    /* Doc mock */
+    .mock-doc { width: 100%; position: relative; z-index: 1; }
+    .mock-doc-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: rgba(99,102,241,.07);
+      border: 1px solid rgba(99,102,241,.18);
+      border-radius: 10px 10px 0 0;
+    }
+    .mock-doc-icon { font-size: 16px; }
+    .mock-doc-title { font-size: 12px; font-weight: 700; color: #818cf8; flex: 1; }
+    .mock-doc-badge {
+      font-size: 9px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 4px;
+      background: rgba(34,197,94,.15); color: #22c55e; border: 1px solid rgba(34,197,94,.25);
+    }
+    .mock-doc-body {
+      background: rgba(0,0,0,.3);
+      border: 1px solid rgba(99,102,241,.1);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 16px;
+    }
+    .mock-doc-line {
+      height: 10px; border-radius: 3px;
+      background: rgba(255,255,255,.08);
       margin-bottom: 8px;
     }
-    .mock-stat-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; font-weight: 600; }
-    .mock-stat-val { font-size: 24px; font-weight: 800; color: #fff; }
-    .mock-bar-wrap { display: flex; gap: 3px; margin-top: 10px; align-items: flex-end; height: 40px; }
-    .mock-bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 8px; }
+    .mock-doc-line--title { height: 14px; background: rgba(255,255,255,.18); width: 70%; margin-bottom: 12px; }
+    .mock-doc-line--short { width: 45%; }
+    .mock-doc-clause {
+      margin-top: 12px; padding: 10px 12px;
+      background: rgba(99,102,241,.07);
+      border-left: 2px solid rgba(99,102,241,.4);
+      border-radius: 0 6px 6px 0;
+    }
+    .mock-doc-clause-label { font-size: 9px; font-weight: 700; letter-spacing: .5px; color: #818cf8; text-transform: uppercase; margin-bottom: 5px; }
+    .mock-doc-clause-line { height: 8px; border-radius: 2px; background: rgba(255,255,255,.07); margin-bottom: 4px; }
 
-    /* AI mock */
-    .mock-ai { width: 100%; }
-    .mock-prompt {
-      padding: 14px; background: rgba(255,255,255,.04); border-radius: 10px;
-      font-size: 13px; color: var(--text-2); margin-bottom: 10px;
+    /* Matter mock */
+    .mock-matters { width: 100%; position: relative; z-index: 1; }
+    .mock-matter-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.03);
+      margin-bottom: 6px;
     }
-    .mock-response {
-      padding: 14px; background: rgba(255,255,255,.06); border-radius: 10px;
-      font-size: 13px; color: #fff; line-height: 1.6;
+    .mock-matter-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
     }
-    .mock-cursor {
-      display: inline-block; width: 2px; height: 14px; background: var(--blue);
-      margin-left: 2px; animation: blink 1s infinite;
-      vertical-align: middle;
+    .mock-matter-info { flex: 1; min-width: 0; }
+    .mock-matter-name { font-size: 12px; font-weight: 600; color: #fff; }
+    .mock-matter-meta { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+    .mock-matter-status {
+      font-size: 10px; font-weight: 700; letter-spacing: .3px;
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
     }
-    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 
     .big-feature-text {}
-    .big-feature-list {
-      display: flex; flex-direction: column; gap: 14px; margin-top: 28px;
-    }
-    .big-feature-item {
-      display: flex; align-items: flex-start; gap: 12px;
-    }
-    .big-feature-item-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      flex-shrink: 0; margin-top: 7px;
-    }
+    .big-feature-list { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
+    .big-feature-item { display: flex; align-items: flex-start; gap: 12px; }
+    .big-feature-item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
     .big-feature-item p { font-size: 15px; color: var(--text-2); line-height: 1.55; }
     .big-feature-item strong { color: #fff; font-weight: 600; }
 
     /* ── DIVIDER ── */
-    .divider {
-      height: 1px; background: var(--border);
-      max-width: 1100px; margin: 0 auto;
+    .divider { height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; }
+
+    /* ── HOW IT WORKS ── */
+    .steps-row {
+      display: flex; gap: 0;
+      margin-top: 60px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
     }
+    .step-card {
+      flex: 1;
+      padding: 28px 24px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .step-card:last-child { border-right: none; }
+    .step-card:hover { background: #131313; }
+    .step-num {
+      font-size: 11px; font-weight: 800; letter-spacing: 1px;
+      color: var(--text-3); text-transform: uppercase; margin-bottom: 14px;
+    }
+    .step-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .step-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .step-arrow {
+      position: absolute; right: -14px; top: 50%;
+      transform: translateY(-50%);
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #080808; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1; font-size: 12px; color: var(--text-3);
+    }
+    .step-card:last-child .step-arrow { display: none; }
 
     /* ── TESTIMONIALS ── */
     .testimonials-grid {
@@ -295,7 +364,7 @@
       border-radius: 16px; padding: 24px 22px;
     }
     .testimonial-stars { display: flex; gap: 3px; margin-bottom: 14px; }
-    .testimonial-stars span { color: var(--yellow); font-size: 14px; }
+    .testimonial-stars span { color: var(--gold); font-size: 14px; }
     .testimonial-text { font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.65; margin-bottom: 18px; }
     .testimonial-author { display: flex; align-items: center; gap: 10px; }
     .testimonial-av {
@@ -313,19 +382,18 @@
     }
     .cta-section::before {
       content: '';
-      position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 400px;
+      position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 500px;
       background: radial-gradient(ellipse,
-        rgba(239,68,68,.06) 0%,
-        rgba(234,179,8,.05) 30%,
-        rgba(34,197,94,.05) 60%,
+        rgba(99,102,241,.08) 0%,
+        rgba(34,197,94,.05) 40%,
         transparent 100%
       );
     }
     .cta-section h2 {
-      font-size: clamp(32px, 5vw, 56px); font-weight: 900;
+      font-size: clamp(30px, 4.5vw, 52px); font-weight: 900;
       letter-spacing: -1.5px; color: #fff; line-height: 1.1;
-      margin-bottom: 18px; max-width: 700px; margin: 0 auto 18px;
+      margin-bottom: 18px; max-width: 640px; margin: 0 auto 18px;
     }
     .cta-section p { font-size: 17px; color: var(--text-2); margin-bottom: 40px; }
     .cta-free-note { margin-top: 16px; font-size: 13px; color: var(--text-3); }
@@ -334,10 +402,10 @@
       overflow: hidden; max-width: 120px; margin: 0 auto 32px;
     }
     .color-bar span { flex: 1; }
-    .color-bar span:nth-child(1) { background: var(--red); }
-    .color-bar span:nth-child(2) { background: var(--yellow); }
-    .color-bar span:nth-child(3) { background: var(--green); }
-    .color-bar span:nth-child(4) { background: var(--blue); }
+    .color-bar span:nth-child(1) { background: var(--accent); }
+    .color-bar span:nth-child(2) { background: var(--accent2); }
+    .color-bar span:nth-child(3) { background: var(--gold); }
+    .color-bar span:nth-child(4) { background: var(--red); }
 
     /* ── FOOTER ── */
     footer {
@@ -360,6 +428,10 @@
       .big-feature--flip { direction: ltr; }
       .testimonials-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
+      .steps-row { flex-direction: column; }
+      .step-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .step-card:last-child { border-bottom: none; }
+      .step-arrow { display: none; }
       footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
     }
   </style>
@@ -374,52 +446,48 @@
   </a>
   <div class="nav-links">
     <a href="#features" class="nav-link">Features</a>
-    <a href="#for-creators" class="nav-link">For Creators</a>
+    <a href="#how-it-works" class="nav-link">How it works</a>
     <a href="https://github.com/oriaw23/thoughts-app" class="nav-link">GitHub</a>
   </div>
-  <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.3.0/Foldbase.Setup.0.0.0.exe" class="nav-cta">Download Free</a>
+  <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.4.0/Foldbase%20Setup%201.4.0.exe" class="nav-cta">Download Free</a>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-badge">
-    <div class="hero-badge-dots">
-      <span></span><span></span><span></span><span></span>
-    </div>
-    Built for content creators who run a real business
+    <span class="hero-badge-dot"></span>
+    Legal automation platform for in-house teams
   </div>
 
-  <h1>Your entire creator<br/><em>business, one place.</em></h1>
+  <h1>Automate your legal work.<br/><em>Close matters faster.</em></h1>
 
   <p class="hero-sub">
-    From content calendars to client invoices — Foldbase is the all-in-one workspace that replaces Notion, spreadsheets, and five other tools you're juggling right now.
+    Foldbase is the automation layer for in-house legal teams — WhatsApp intake, AI document drafting, matter management, and legal research in one platform.
   </p>
 
   <div class="hero-btns">
-    <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.3.0/Foldbase.Setup.0.0.0.exe" class="btn-primary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.4.0/Foldbase%20Setup%201.4.0.exe" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Download for Windows — Free
     </a>
     <a href="#features" class="btn-secondary">
-      See all features
+      See features
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
   </div>
-  <p class="hero-note">Windows 10/11 · No subscription · All data stays local</p>
+  <p class="hero-note">Windows 10/11 · No subscription · Your data stays local</p>
 </div>
 
-<!-- PLATFORMS -->
-<div class="platforms">
-  <p class="platforms-label">Built for creators on</p>
-  <div class="platforms-row">
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--red)"></span>YouTube</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--blue)"></span>Instagram</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--yellow)"></span>TikTok</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--green)"></span>Podcast</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--red)"></span>Newsletter</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--blue)"></span>LinkedIn</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--yellow)"></span>Twitter/X</span>
-    <span class="platform-tag"><span class="platform-dot" style="background:var(--green)"></span>Blog</span>
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <p class="trust-label">Built for legal teams using</p>
+  <div class="trust-row">
+    <span class="trust-tag"><span class="trust-dot" style="background:#25d366"></span>WhatsApp Business</span>
+    <span class="trust-tag"><span class="trust-dot" style="background:#4285f4"></span>Google Docs</span>
+    <span class="trust-tag"><span class="trust-dot" style="background:var(--accent)"></span>AI Drafting</span>
+    <span class="trust-tag"><span class="trust-dot" style="background:var(--gold)"></span>E-Signatures</span>
+    <span class="trust-tag"><span class="trust-dot" style="background:var(--accent2)"></span>Matter Management</span>
+    <span class="trust-tag"><span class="trust-dot" style="background:var(--red)"></span>Legal Research</span>
   </div>
 </div>
 
@@ -427,99 +495,89 @@
 
 <!-- FEATURES GRID -->
 <section id="features">
-  <span class="section-label" style="color:var(--blue)">Everything in one place</span>
-  <h2 class="section-title">Stop switching between<br/>10 different apps.</h2>
-  <p class="section-sub">Foldbase brings everything a creator needs to build and run a business — in one fast, offline desktop app.</p>
+  <span class="section-label" style="color:var(--accent)">Everything a legal team needs</span>
+  <h2 class="section-title">Stop doing manually what<br/>can be automated.</h2>
+  <p class="section-sub">From client intake to document delivery — Foldbase automates the repetitive legal work so your team can focus on what matters.</p>
 
   <div class="features-grid">
 
     <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(239,68,68,.12)">📅</div>
-      <p class="feature-title">Content Calendar</p>
-      <p class="feature-desc">Plan, schedule, and batch your content across all platforms. See your entire month at a glance and never miss a posting day.</p>
-      <span class="feature-tag" style="color:var(--red)">
+      <div class="feature-icon" style="background:rgba(37,211,102,.1)">💬</div>
+      <p class="feature-title">WhatsApp Intake Automation</p>
+      <p class="feature-desc">Automatically respond to client messages, run a smart questionnaire, and send the correct legal document — zero manual effort.</p>
+      <span class="feature-tag" style="color:#25d366">
         <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Planning
+        Automation
       </span>
     </div>
 
     <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(234,179,8,.12)">💡</div>
-      <p class="feature-title">Idea Vault</p>
-      <p class="feature-desc">Capture hooks, titles, and content ideas the moment they strike. Tag by platform, format, or status and never lose a great idea again.</p>
-      <span class="feature-tag" style="color:var(--yellow)">
+      <div class="feature-icon" style="background:rgba(99,102,241,.1)">📋</div>
+      <p class="feature-title">Matter Management</p>
+      <p class="feature-desc">Track every case, client, deadline, and document. Full visibility across your entire legal portfolio in one clean workspace.</p>
+      <span class="feature-tag" style="color:var(--accent)">
         <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Creativity
+        Matters
       </span>
     </div>
 
     <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(34,197,94,.12)">💰</div>
-      <p class="feature-title">Revenue Tracker</p>
-      <p class="feature-desc">Track brand deals, sponsorships, and income streams. Know exactly how much you made this month, and from whom.</p>
-      <span class="feature-tag" style="color:var(--green)">
-        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Business
-      </span>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(59,130,246,.12)">🤝</div>
-      <p class="feature-title">Client Hub</p>
-      <p class="feature-desc">Manage brand partnerships, track deliverables, deadlines, and payment status for every collaboration in one clean workspace.</p>
-      <span class="feature-tag" style="color:var(--blue)">
-        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Clients
-      </span>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(239,68,68,.12)">🤖</div>
-      <p class="feature-title">AI Writing Assistant</p>
-      <p class="feature-desc">Generate video scripts, captions, email pitches, and hooks with AI. Trained to match your voice and style, not generic output.</p>
-      <span class="feature-tag" style="color:var(--red)">
+      <div class="feature-icon" style="background:rgba(234,179,8,.1)">🤖</div>
+      <p class="feature-title">AI Document Drafting</p>
+      <p class="feature-desc">Draft NDAs, employment agreements, legal memos, and contracts in seconds. Reviewed and edited in plain language your clients understand.</p>
+      <span class="feature-tag" style="color:var(--gold)">
         <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
         AI-Powered
       </span>
     </div>
 
     <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(234,179,8,.12)">🎨</div>
-      <p class="feature-title">Brand Kit</p>
-      <p class="feature-desc">Store your brand colors, fonts, logo variations, and tone of voice. Share it with editors and collaborators in seconds.</p>
-      <span class="feature-tag" style="color:var(--yellow)">
-        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Branding
-      </span>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(34,197,94,.12)">📊</div>
-      <p class="feature-title">Goals & Analytics</p>
-      <p class="feature-desc">Set subscriber, revenue, and engagement goals. Track your milestones and see your progress visually over time.</p>
-      <span class="feature-tag" style="color:var(--green)">
-        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Growth
-      </span>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(59,130,246,.12)">👥</div>
-      <p class="feature-title">Team & Collaboration</p>
-      <p class="feature-desc">Work with editors, VAs, and co-creators. Share whiteboards, pages, and project boards — everyone on the same page.</p>
-      <span class="feature-tag" style="color:var(--blue)">
-        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Team
-      </span>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon" style="background:rgba(239,68,68,.12)">📝</div>
-      <p class="feature-title">Script & Notes Editor</p>
-      <p class="feature-desc">Write full video scripts, long-form articles, and show notes with a distraction-free editor built for creators, not developers.</p>
+      <div class="feature-icon" style="background:rgba(239,68,68,.1)">🔍</div>
+      <p class="feature-title">Legal Research</p>
+      <p class="feature-desc">Research case law, statutes, and precedents with AI-assisted analysis. Get summaries, citations, and risk assessments instantly.</p>
       <span class="feature-tag" style="color:var(--red)">
         <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-        Writing
+        Research
+      </span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(99,102,241,.1)">✍️</div>
+      <p class="feature-title">Contract Review</p>
+      <p class="feature-desc">Upload a contract, get an AI redline with risk flags, missing clauses, and suggested edits — in minutes, not hours.</p>
+      <span class="feature-tag" style="color:var(--accent)">
+        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
+        Review
+      </span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(34,197,94,.1)">📤</div>
+      <p class="feature-title">Document Routing</p>
+      <p class="feature-desc">Route intake answers to the right Google Doc automatically. Send the link to clients via WhatsApp without lifting a finger.</p>
+      <span class="feature-tag" style="color:var(--accent2)">
+        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
+        Routing
+      </span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(234,179,8,.1)">🛡️</div>
+      <p class="feature-title">Compliance Checks</p>
+      <p class="feature-desc">Run jurisdiction-aware compliance checks on contracts and policies. Flag issues before they become problems.</p>
+      <span class="feature-tag" style="color:var(--gold)">
+        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
+        Compliance
+      </span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(239,68,68,.1)">👥</div>
+      <p class="feature-title">Legal Team Collaboration</p>
+      <p class="feature-desc">Share matters, documents, and research with associates and paralegals. Role-based access so everyone sees what they need to.</p>
+      <span class="feature-tag" style="color:var(--red)">
+        <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
+        Team
       </span>
     </div>
 
@@ -528,161 +586,199 @@
 
 <div class="divider"></div>
 
-<!-- BIG FEATURE 1 — Content Calendar -->
-<div class="big-feature" id="for-creators">
-  <div class="big-feature-visual" style="--glow: rgba(239,68,68,.2)">
-    <div class="mock-calendar" style="position:relative;z-index:1">
-      <div class="mock-row">
-        <span class="mock-day-label">MON</span>
-        <span class="mock-day-label">TUE</span>
-        <span class="mock-day-label">WED</span>
-        <span class="mock-day-label">THU</span>
-        <span class="mock-day-label">FRI</span>
-      </div>
-      <div class="mock-row">
-        <div style="flex:1">
-          <div class="mock-chip" style="background:rgba(239,68,68,.18);color:#ef4444">
-            <span class="mock-chip-dot" style="background:var(--red)"></span>YouTube Short
-          </div>
-          <div class="mock-chip" style="background:rgba(59,130,246,.18);color:#3b82f6">
-            <span class="mock-chip-dot" style="background:var(--blue)"></span>Instagram
-          </div>
-        </div>
-        <div style="flex:1"></div>
-        <div style="flex:1">
-          <div class="mock-chip" style="background:rgba(234,179,8,.18);color:#eab308">
-            <span class="mock-chip-dot" style="background:var(--yellow)"></span>TikTok
-          </div>
-        </div>
-        <div style="flex:1"></div>
-        <div style="flex:1">
-          <div class="mock-chip" style="background:rgba(34,197,94,.18);color:#22c55e">
-            <span class="mock-chip-dot" style="background:var(--green)"></span>Newsletter
-          </div>
-          <div class="mock-chip" style="background:rgba(239,68,68,.18);color:#ef4444">
-            <span class="mock-chip-dot" style="background:var(--red)"></span>YouTube
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:10px;padding:12px;background:rgba(255,255,255,.04);border-radius:10px">
-        <p style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">This week</p>
-        <p style="font-size:13px;color:#fff;font-weight:700">5 posts scheduled</p>
-        <p style="font-size:12px;color:rgba(255,255,255,.4);margin-top:2px">3 platforms · 2 pending review</p>
-      </div>
-    </div>
-  </div>
+<!-- HOW IT WORKS -->
+<section id="how-it-works" style="text-align:center">
+  <span class="section-label" style="color:var(--accent2)">How it works</span>
+  <h2 class="section-title">From client message to signed doc<br/>in minutes, not days.</h2>
+  <p class="section-sub" style="margin:0 auto">Set up once. Run forever. No code required.</p>
 
-  <div class="big-feature-text">
-    <span class="section-label" style="color:var(--red)">Content Calendar</span>
-    <h2 class="section-title">Plan a month of content<br/>in one afternoon.</h2>
-    <p class="section-sub">See all your platforms in one view. Schedule posts, batch your recording days, and stop scrambling for what to post next.</p>
-    <div class="big-feature-list">
-      <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--red)"></span>
-        <p><strong>Multi-platform calendar</strong> — YouTube, Instagram, TikTok, Newsletter and more in one board</p>
-      </div>
-      <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--yellow)"></span>
-        <p><strong>Content batching</strong> — group recording days, editing days, and posting days visually</p>
-      </div>
-      <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--green)"></span>
-        <p><strong>Status tracking</strong> — Idea → Script → Recorded → Edited → Published</p>
-      </div>
+  <div class="steps-row">
+    <div class="step-card">
+      <div class="step-num">Step 01</div>
+      <p class="step-title">Client sends a message</p>
+      <p class="step-desc">A client messages your WhatsApp Business number. Foldbase picks it up instantly, 24/7.</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 02</div>
+      <p class="step-title">Smart questionnaire runs</p>
+      <p class="step-desc">Your automation sends a greeting and walks the client through targeted questions to understand their need.</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 03</div>
+      <p class="step-title">AI picks the right doc</p>
+      <p class="step-desc">Based on answers, Foldbase selects or auto-generates the correct legal document from your Google Docs library.</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-card">
+      <div class="step-num">Step 04</div>
+      <p class="step-title">Document delivered</p>
+      <p class="step-desc">The client receives the document link via WhatsApp. A new matter is opened in your dashboard automatically.</p>
     </div>
   </div>
-</div>
+</section>
 
 <div class="divider"></div>
 
-<!-- BIG FEATURE 2 — Revenue -->
-<div class="big-feature big-feature--flip">
-  <div class="big-feature-visual" style="--glow: rgba(34,197,94,.2)">
-    <div class="mock-revenue" style="position:relative;z-index:1">
-      <div class="mock-stat">
-        <p class="mock-stat-label">TOTAL REVENUE · MAY 2026</p>
-        <p class="mock-stat-val" style="color:var(--green)">$12,840</p>
-        <div class="mock-bar-wrap">
-          <div class="mock-bar" style="height:60%;background:rgba(239,68,68,.5)"></div>
-          <div class="mock-bar" style="height:40%;background:rgba(234,179,8,.5)"></div>
-          <div class="mock-bar" style="height:80%;background:rgba(34,197,94,.5)"></div>
-          <div class="mock-bar" style="height:55%;background:rgba(59,130,246,.5)"></div>
-          <div class="mock-bar" style="height:90%;background:rgba(239,68,68,.5)"></div>
-          <div class="mock-bar" style="height:70%;background:rgba(34,197,94,.5)"></div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-        <div style="padding:12px;background:rgba(239,68,68,.1);border-radius:10px;border:1px solid rgba(239,68,68,.2)">
-          <p style="font-size:10px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Brand Deals</p>
-          <p style="font-size:18px;font-weight:800;color:#fff">$8,500</p>
-        </div>
-        <div style="padding:12px;background:rgba(34,197,94,.1);border-radius:10px;border:1px solid rgba(34,197,94,.2)">
-          <p style="font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Ad Revenue</p>
-          <p style="font-size:18px;font-weight:800;color:#fff">$4,340</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="big-feature-text">
-    <span class="section-label" style="color:var(--green)">Revenue Tracker</span>
-    <h2 class="section-title">Know your numbers.<br/>Grow your business.</h2>
-    <p class="section-sub">Track every dollar — brand deals, ad revenue, merch, courses, consulting. See what's growing and what's not.</p>
-    <div class="big-feature-list">
-      <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--green)"></span>
-        <p><strong>Income streams</strong> — categorize and visualize every revenue source</p>
-      </div>
-      <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--blue)"></span>
-        <p><strong>Brand deal tracking</strong> — status, deadlines, deliverables, and payment</p>
-      </div>
-      <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--yellow)"></span>
-        <p><strong>Monthly reports</strong> — compare month-over-month and year-over-year</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- BIG FEATURE 3 — AI -->
+<!-- BIG FEATURE 1 — WhatsApp Automation -->
 <div class="big-feature">
-  <div class="big-feature-visual" style="--glow: rgba(59,130,246,.2)">
-    <div class="mock-ai" style="position:relative;z-index:1">
-      <div class="mock-prompt">
-        <span style="color:rgba(255,255,255,.4);font-size:11px;font-weight:600;display:block;margin-bottom:6px">YOU</span>
-        Write a hook for a YouTube video about content creator burnout
+  <div class="big-feature-visual" style="--glow: rgba(37,211,102,.15)">
+    <div class="mock-wa">
+      <div class="mock-wa-header">
+        <span class="mock-wa-dot"></span>
+        <span class="mock-wa-name">Legal Intake Bot</span>
+        <span class="mock-wa-status">online</span>
       </div>
-      <div class="mock-response">
-        <span style="color:var(--blue);font-size:11px;font-weight:600;display:block;margin-bottom:6px">FOLDBASE AI</span>
-        "I made $200K last year as a creator — and I almost quit in April. Here's the thing nobody tells you about going full-time..."<span class="mock-cursor"></span>
-      </div>
-      <div style="display:flex;gap:6px;margin-top:8px">
-        <div style="flex:1;padding:8px;background:rgba(255,255,255,.04);border-radius:8px;font-size:11px;color:rgba(255,255,255,.5);text-align:center;cursor:pointer">Regenerate</div>
-        <div style="flex:1;padding:8px;background:rgba(255,255,255,.04);border-radius:8px;font-size:11px;color:rgba(255,255,255,.5);text-align:center;cursor:pointer">Make it shorter</div>
-        <div style="flex:1;padding:8px;background:rgba(59,130,246,.2);border-radius:8px;font-size:11px;color:var(--blue);text-align:center;font-weight:600;cursor:pointer">Use this →</div>
+      <div class="mock-wa-msgs">
+        <div class="mock-wa-msg mock-wa-msg--in">
+          Hi, I need help with a contract dispute
+          <div class="mock-wa-time">9:14 AM</div>
+        </div>
+        <div class="mock-wa-msg mock-wa-msg--out">
+          Hello! I'm the legal intake assistant. What type of matter do you need help with?
+          <br/><br/>1. Employment issue<br/>2. Contract review<br/>3. Business dispute
+          <div class="mock-wa-time">9:14 AM ✓✓</div>
+        </div>
+        <div class="mock-wa-msg mock-wa-msg--in">
+          2
+          <div class="mock-wa-time">9:15 AM</div>
+        </div>
+        <div class="mock-wa-msg mock-wa-msg--out">
+          Based on your answers, here is the document for you:
+          <br/><br/>📄 <span style="color:#25d366;text-decoration:underline">docs.google.com/contract-review-guide</span>
+          <div class="mock-wa-time">9:15 AM ✓✓</div>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="big-feature-text">
-    <span class="section-label" style="color:var(--blue)">AI Writing Assistant</span>
-    <h2 class="section-title">Write better content,<br/>10× faster.</h2>
-    <p class="section-sub">Your built-in AI knows you're a creator. It writes hooks, scripts, captions, and pitch emails — all in your voice, not a generic bot voice.</p>
+    <span class="section-label" style="color:#25d366">WhatsApp Automation</span>
+    <h2 class="section-title">Your 24/7 legal intake<br/>runs itself.</h2>
+    <p class="section-sub">Build a WhatsApp automation in minutes. Clients get instant, professional responses and the right document — even at 2am.</p>
     <div class="big-feature-list">
       <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--blue)"></span>
-        <p><strong>Video scripts</strong> — full scripts with intro, body, and CTA in seconds</p>
+        <span class="big-feature-item-dot" style="background:#25d366"></span>
+        <p><strong>Auto-respond instantly</strong> — no client waits more than a second for a reply</p>
       </div>
       <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--red)"></span>
-        <p><strong>Caption generator</strong> — platform-optimized captions with hashtags</p>
+        <span class="big-feature-item-dot" style="background:var(--accent)"></span>
+        <p><strong>Intelligent routing</strong> — each answer routes to a different document or matter type</p>
       </div>
       <div class="big-feature-item">
-        <span class="big-feature-item-dot" style="background:var(--green)"></span>
-        <p><strong>Pitch emails</strong> — professional brand outreach that actually gets replies</p>
+        <span class="big-feature-item-dot" style="background:var(--gold)"></span>
+        <p><strong>Google Docs integration</strong> — auto-create and send the correct doc directly in chat</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BIG FEATURE 2 — AI Drafting -->
+<div class="big-feature big-feature--flip">
+  <div class="big-feature-visual" style="--glow: rgba(99,102,241,.15)">
+    <div class="mock-doc">
+      <div class="mock-doc-header">
+        <span class="mock-doc-icon">📄</span>
+        <span class="mock-doc-title">Non-Disclosure Agreement — Acme Corp</span>
+        <span class="mock-doc-badge">AI Drafted</span>
+      </div>
+      <div class="mock-doc-body">
+        <div class="mock-doc-line mock-doc-line--title"></div>
+        <div class="mock-doc-line" style="width:90%"></div>
+        <div class="mock-doc-line" style="width:80%"></div>
+        <div class="mock-doc-line mock-doc-line--short"></div>
+        <div class="mock-doc-clause">
+          <div class="mock-doc-clause-label">Clause 2 — Confidentiality</div>
+          <div class="mock-doc-clause-line" style="width:95%"></div>
+          <div class="mock-doc-clause-line" style="width:80%"></div>
+          <div class="mock-doc-clause-line" style="width:60%"></div>
+        </div>
+        <div class="mock-doc-clause" style="margin-top:8px;border-left-color:rgba(34,197,94,.4)">
+          <div class="mock-doc-clause-label" style="color:#22c55e">Clause 5 — Term & Termination</div>
+          <div class="mock-doc-clause-line" style="width:90%"></div>
+          <div class="mock-doc-clause-line" style="width:65%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="big-feature-text">
+    <span class="section-label" style="color:var(--accent)">AI Document Drafting</span>
+    <h2 class="section-title">First draft in seconds.<br/>Not hours.</h2>
+    <p class="section-sub">Describe what you need and the AI drafts it — NDAs, employment agreements, vendor contracts, memos. You review, not write from scratch.</p>
+    <div class="big-feature-list">
+      <div class="big-feature-item">
+        <span class="big-feature-item-dot" style="background:var(--accent)"></span>
+        <p><strong>Full legal documents</strong> — NDA, MSA, employment contract, IP assignment, legal memo</p>
+      </div>
+      <div class="big-feature-item">
+        <span class="big-feature-item-dot" style="background:var(--gold)"></span>
+        <p><strong>Clause-level editing</strong> — refine individual clauses without redoing the whole document</p>
+      </div>
+      <div class="big-feature-item">
+        <span class="big-feature-item-dot" style="background:var(--accent2)"></span>
+        <p><strong>Export to Google Docs</strong> — send the draft straight to your document library</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BIG FEATURE 3 — Matter Management -->
+<div class="big-feature">
+  <div class="big-feature-visual" style="--glow: rgba(234,179,8,.12)">
+    <div class="mock-matters">
+      <div class="mock-matter-row">
+        <div class="mock-matter-icon" style="background:rgba(99,102,241,.15)">⚖️</div>
+        <div class="mock-matter-info">
+          <div class="mock-matter-name">Acme Corp — Employment Dispute</div>
+          <div class="mock-matter-meta">Due Jun 12 · 3 docs · Sarah (Lead)</div>
+        </div>
+        <div class="mock-matter-status" style="background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2)">Urgent</div>
+      </div>
+      <div class="mock-matter-row">
+        <div class="mock-matter-icon" style="background:rgba(234,179,8,.15)">📋</div>
+        <div class="mock-matter-info">
+          <div class="mock-matter-name">TechStart — SaaS MSA Review</div>
+          <div class="mock-matter-meta">Due Jun 19 · 5 docs · Mark (Lead)</div>
+        </div>
+        <div class="mock-matter-status" style="background:rgba(234,179,8,.12);color:#eab308;border:1px solid rgba(234,179,8,.2)">In Review</div>
+      </div>
+      <div class="mock-matter-row">
+        <div class="mock-matter-icon" style="background:rgba(34,197,94,.15)">🏢</div>
+        <div class="mock-matter-info">
+          <div class="mock-matter-name">Globex Inc — IP Assignment</div>
+          <div class="mock-matter-meta">Due Jun 30 · 2 docs · Team</div>
+        </div>
+        <div class="mock-matter-status" style="background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2)">On Track</div>
+      </div>
+      <div style="padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-top:2px">
+        <div style="font-size:10px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">This month</div>
+        <div style="font-size:15px;font-weight:800;color:#fff">12 active matters &nbsp;<span style="color:var(--accent2);font-size:13px">↑ 3 closed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="big-feature-text">
+    <span class="section-label" style="color:var(--gold)">Matter Management</span>
+    <h2 class="section-title">Every matter.<br/>Always under control.</h2>
+    <p class="section-sub">Track every open matter, deadline, document, and responsible attorney in one dashboard. No more cases falling through the cracks.</p>
+    <div class="big-feature-list">
+      <div class="big-feature-item">
+        <span class="big-feature-item-dot" style="background:var(--gold)"></span>
+        <p><strong>Matter dashboard</strong> — all cases, status, deadlines, and docs in one view</p>
+      </div>
+      <div class="big-feature-item">
+        <span class="big-feature-item-dot" style="background:var(--accent)"></span>
+        <p><strong>Document linking</strong> — attach contracts, memos, and research to any matter</p>
+      </div>
+      <div class="big-feature-item">
+        <span class="big-feature-item-dot" style="background:var(--accent2)"></span>
+        <p><strong>Auto-open from intake</strong> — WhatsApp intake automatically creates a new matter</p>
       </div>
     </div>
   </div>
@@ -692,42 +788,42 @@
 
 <!-- TESTIMONIALS -->
 <section>
-  <span class="section-label" style="color:var(--yellow)">What creators say</span>
-  <h2 class="section-title">Real creators.<br/>Real results.</h2>
+  <span class="section-label" style="color:var(--gold)">What legal teams say</span>
+  <h2 class="section-title">Built with real<br/>legal teams in mind.</h2>
 
   <div class="testimonials-grid">
     <div class="testimonial-card">
       <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <p class="testimonial-text">"I used to have Notion, spreadsheets, Trello, and Notes all open at once. Foldbase replaced all of them. My content planning went from chaos to a system that actually works."</p>
+      <p class="testimonial-text">"We handle 60+ client inquiries a week. Foldbase's WhatsApp automation cut our intake time by 80%. Clients get the right document the same minute they reach out — it's like having a 24/7 paralegal."</p>
       <div class="testimonial-author">
-        <div class="testimonial-av" style="background:var(--red)">S</div>
+        <div class="testimonial-av" style="background:var(--accent)">R</div>
         <div>
-          <p class="testimonial-name">Sara K.</p>
-          <p class="testimonial-handle">280K YouTube · Lifestyle</p>
+          <p class="testimonial-name">Rachel M.</p>
+          <p class="testimonial-handle">General Counsel · 200-person tech company</p>
         </div>
       </div>
     </div>
 
     <div class="testimonial-card">
       <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <p class="testimonial-text">"The revenue tracker alone is worth it. For the first time I actually know where my money comes from. Brand deal tracking is insanely useful when you're juggling 6 partnerships."</p>
+      <p class="testimonial-text">"AI drafting alone saves me 3 hours a day. I describe the contract, it drafts it, I review. First drafts used to take me half a day. Now I get it in 30 seconds and spend my time on what actually needs judgment."</p>
       <div class="testimonial-author">
-        <div class="testimonial-av" style="background:var(--green)">M</div>
+        <div class="testimonial-av" style="background:var(--gold)">D</div>
         <div>
-          <p class="testimonial-name">Marcus L.</p>
-          <p class="testimonial-handle">95K Instagram · Finance creator</p>
+          <p class="testimonial-name">David K.</p>
+          <p class="testimonial-handle">Senior Associate · In-House Legal Dept</p>
         </div>
       </div>
     </div>
 
     <div class="testimonial-card">
       <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <p class="testimonial-text">"The AI writes hooks faster than I can think. I batch 30 content ideas in one session, then use the calendar to plan the next 6 weeks. I finally feel like I'm running a business, not just posting."</p>
+      <p class="testimonial-text">"Matter management is exactly what our team needed. Everything is in one place — no more chasing emails to find a document, no more missed deadlines. The team is finally on the same page."</p>
       <div class="testimonial-author">
-        <div class="testimonial-av" style="background:var(--blue)">J</div>
+        <div class="testimonial-av" style="background:var(--accent2)">A</div>
         <div>
-          <p class="testimonial-name">Jamie R.</p>
-          <p class="testimonial-handle">1.2M TikTok · Tech & Productivity</p>
+          <p class="testimonial-name">Anna L.</p>
+          <p class="testimonial-handle">Legal Operations Manager · Financial Services</p>
         </div>
       </div>
     </div>
@@ -737,13 +833,13 @@
 <!-- CTA SECTION -->
 <div class="cta-section">
   <div class="color-bar"><span></span><span></span><span></span><span></span></div>
-  <h2>Ready to run your creator<br/>business like a pro?</h2>
+  <h2>Give your legal team<br/>an unfair advantage.</h2>
   <p>Free forever. No subscription. Your data stays on your device.</p>
-  <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.3.0/Foldbase.Setup.0.0.0.exe" class="btn-primary" style="display:inline-flex;margin:0 auto">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  <a href="https://github.com/oriaw23/thoughts-app/releases/download/v1.4.0/Foldbase%20Setup%201.4.0.exe" class="btn-primary" style="display:inline-flex;margin:0 auto">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Download Foldbase — Free
   </a>
-  <p class="cta-free-note">Windows 10 / 11 · 80 MB · No account required</p>
+  <p class="cta-free-note">Windows 10 / 11 · No account required · All data stays local</p>
 </div>
 
 <!-- FOOTER -->

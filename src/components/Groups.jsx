@@ -28,6 +28,9 @@ export default function Groups({ initialGroupId = null }) {
   const [tab, setTab]           = useState('overview');
   const [creating, setCreating] = useState(false);
   const [newName, setNewName]   = useState('');
+  const [newChanName, setNewChanName] = useState('');
+  const [addingChan, setAddingChan]   = useState(false);
+  const chanInputRef = useRef(null);
   const inputRef = useRef(null);
 
   const currentGroup = active ? groups.find(g => g.id === active.id) || active : null;
@@ -94,41 +97,89 @@ export default function Groups({ initialGroupId = null }) {
       <div className="grp__panel">
         {currentGroup ? (
           <>
+            {/* Group brand */}
             <div className="grp__panel-header">
-              <div className="grp__panel-brand">
-                <div className="grp__panel-av" style={{ background: currentGroup.color }}>
-                  {currentGroup.name[0].toUpperCase()}
-                </div>
+              <div className="grp__panel-av" style={{ background: currentGroup.color }}>
+                {currentGroup.name[0].toUpperCase()}
+              </div>
+              <div className="grp__panel-brand-info">
                 <span className="grp__panel-name">{currentGroup.name}</span>
+                <span className="grp__panel-members">{currentGroup.members?.length||0} members</span>
               </div>
             </div>
 
             <div className="grp__panel-body">
-              {TABS.map(t => {
-                const count = t.id === 'meetings' ? (currentGroup.meetings?.length||0)
-                  : t.id === 'members' ? (currentGroup.members?.length||0)
-                  : t.id === 'pages' ? (currentGroup.sharedPages?.length||0)
-                  : 0;
-                return (
-                  <button key={t.id} className={`grp__panel-type${tab===t.id?' active':''}`}
-                    onClick={() => setTab(t.id)}>
-                    <span className="grp__panel-type-icon">{t.icon}</span>
-                    <span className="grp__panel-type-label">{t.label}</span>
-                    {count > 0 && <span className="grp__panel-type-count">{count}</span>}
+
+              {/* Overview */}
+              <button className={`grp__nav-item${tab==='overview'?' active':''}`} onClick={() => setTab('overview')}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Overview
+              </button>
+
+              {/* Meetings section */}
+              <div className="grp__nav-section-label">
+                <span>Meetings</span>
+                <button className="grp__nav-section-add" title="Add meeting"
+                  onClick={() => updateGroup(currentGroup.id, { meetings: [...(currentGroup.meetings||[]), { id: uuidv4(), title: 'New meeting', date: new Date().toISOString().slice(0,10), time: '', done: false }] })}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+              {/* Real meetings linked to this group */}
+              {(() => {
+                const today = new Date().toISOString().slice(0,10);
+                const real = (() => { try { return (JSON.parse(localStorage.getItem('mynotion_meetings_v6')||'[]')).filter(m=>m.groupId===currentGroup.id).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)); } catch { return []; } })();
+                const local = currentGroup.meetings||[];
+                const all = [...real, ...local].slice(0, 10);
+                if (all.length === 0) return <p className="grp__nav-empty">No meetings yet</p>;
+                return all.map(m => (
+                  <button key={m.id} className={`grp__nav-item grp__nav-item--meeting${tab===`mtg:${m.id}`?' active':''}`}
+                    onClick={() => setTab(`mtg:${m.id}`)}>
+                    <span className="grp__nav-meeting-dot" style={{background: m.color||currentGroup.color}}/>
+                    <span className="grp__nav-meeting-name">{m.title||'Untitled'}</span>
+                    {m.date && <span className="grp__nav-meeting-date">{m.date.slice(5)}</span>}
                   </button>
-                );
-              })}
+                ));
+              })()}
+
+              {/* Channels section */}
+              <div className="grp__nav-section-label">
+                <span>Channels</span>
+                <button className="grp__nav-section-add" title="Add channel"
+                  onClick={() => { setAddingChan(true); setTimeout(() => chanInputRef.current?.focus(), 40); }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+              {(currentGroup.channels||[]).map(ch => (
+                <button key={ch.id} className={`grp__nav-item grp__nav-item--channel${tab===`ch:${ch.id}`?' active':''}`}
+                  onClick={() => setTab(`ch:${ch.id}`)}>
+                  <span className="grp__nav-hash" style={{color: ch.color||currentGroup.color}}>#</span>
+                  <span className="grp__nav-ch-name">{ch.name}</span>
+                </button>
+              ))}
+              {addingChan ? (
+                <div className="grp__nav-add-chan">
+                  <span className="grp__nav-hash" style={{color:currentGroup.color}}>#</span>
+                  <input ref={chanInputRef} className="grp__nav-chan-input" placeholder="channel-name"
+                    value={newChanName} onChange={e=>setNewChanName(e.target.value)}
+                    onBlur={() => { if (!newChanName.trim()) { setAddingChan(false); return; } updateGroup(currentGroup.id, { channels: [...(currentGroup.channels||[]), { id: uuidv4(), name: newChanName.trim().replace(/\s+/g,'-').toLowerCase(), color: currentGroup.color, messages: [] }] }); setNewChanName(''); setAddingChan(false); }}
+                    onKeyDown={e => { if (e.key === 'Escape') { setAddingChan(false); setNewChanName(''); } }}
+                  />
+                </div>
+              ) : (currentGroup.channels||[]).length === 0 && (
+                <p className="grp__nav-empty">No channels yet</p>
+              )}
+
             </div>
 
             <div className="grp__panel-footer">
               <button className="grp__panel-del" onClick={() => deleteGroup(currentGroup.id)}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                מחק קבוצה
+                Delete group
               </button>
             </div>
           </>
         ) : (
-          <div className="grp__panel-empty">בחר קבוצה</div>
+          <div className="grp__panel-empty">Select a group</div>
         )}
       </div>
 
@@ -148,6 +199,17 @@ export default function Groups({ initialGroupId = null }) {
             onAddMember={(name) => addMember(currentGroup.id, name)}
             onUpdate={ch => updateGroup(currentGroup.id, ch)}
           />
+        ) : tab.startsWith('ch:') ? (
+          <GroupChannelChat
+            group={currentGroup}
+            channelId={tab.slice(3)}
+            onUpdate={ch => updateGroup(currentGroup.id, ch)}
+          />
+        ) : tab.startsWith('mtg:') ? (
+          <GroupMeetingDetail
+            group={currentGroup}
+            meetingId={tab.slice(4)}
+          />
         ) : (
           <GroupContent
             group={currentGroup}
@@ -162,33 +224,441 @@ export default function Groups({ initialGroupId = null }) {
   );
 }
 
-// ── Content panel ─────────────────────────────────────────────────────────────
-function GroupContent({ group, tab, onUpdate, onAddMember, onRemoveMember }) {
+// ── Group channel chat ────────────────────────────────────────────────────────
+function GroupChannelChat({ group, channelId, onUpdate }) {
+  const channel = (group.channels||[]).find(c => c.id === channelId);
+  const [input, setInput] = useState('');
+  const bottomRef = useRef(null);
+  const user = (() => { try { return JSON.parse(localStorage.getItem('mynotion_user_v1')||'{"name":"You"}'); } catch { return {name:'You'}; } })();
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:'smooth' }); }, [group.channels, channelId]);
+
+  if (!channel) return <div className="grp__page"><div className="grp__page-body"><p className="grp__empty-msg">Channel not found.</p></div></div>;
+
+  const msgs = channel.messages || [];
+
+  const send = () => {
+    const text = input.trim(); if (!text) return;
+    const msg = { id: uuidv4(), text, author: user.name||'You', createdAt: new Date().toISOString() };
+    const nextChannels = (group.channels||[]).map(c => c.id===channelId ? {...c, messages:[...msgs, msg]} : c);
+    onUpdate({ channels: nextChannels });
+    setInput('');
+  };
+
+  const grouped = [];
+  msgs.forEach(m => {
+    const date = new Date(m.createdAt).toDateString();
+    const last = grouped[grouped.length-1];
+    if (!last || last.date!==date) grouped.push({date, msgs:[m]});
+    else last.msgs.push(m);
+  });
+
+  const fmtTime = iso => new Date(iso).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  const fmtDate = iso => { const d=new Date(iso),t=new Date(); if(d.toDateString()===t.toDateString()) return 'Today'; const y=new Date(t);y.setDate(t.getDate()-1); if(d.toDateString()===y.toDateString()) return 'Yesterday'; return d.toLocaleDateString('en',{month:'short',day:'numeric'}); };
+
   return (
-    <div className="grp__cnt">
-      {/* Members avatars strip */}
-      <div className="grp__members-bar">
-        <div className="grp__members-avatars">
-          {(group.members||[]).slice(0,8).map(m => (
-            <div key={m.id} className="grp__mb-av" style={{ background: group.color }} title={m.name}>
-              {m.name[0]?.toUpperCase()}
+    <div className="grp__chat">
+      <div className="grp__chat-head">
+        <span className="grp__chat-hash" style={{color:channel.color||group.color}}>#</span>
+        <span className="grp__chat-name">{channel.name}</span>
+        <span className="grp__chat-count">{msgs.length} messages</span>
+      </div>
+      <div className="grp__chat-msgs">
+        {msgs.length===0 && (
+          <div className="grp__chat-welcome">
+            <div className="grp__chat-welcome-icon" style={{background:(channel.color||group.color)+'22',color:channel.color||group.color}}>#</div>
+            <h3>Welcome to #{channel.name}</h3>
+            <p>This is the beginning of the #{channel.name} channel.</p>
+          </div>
+        )}
+        {grouped.map(g => (
+          <div key={g.date}>
+            <div className="grp__chat-date"><span>{fmtDate(g.msgs[0].createdAt)}</span></div>
+            {g.msgs.map((m,i) => {
+              const prev = g.msgs[i-1];
+              const cont = prev && prev.author===m.author && new Date(m.createdAt)-new Date(prev.createdAt)<5*60*1000;
+              return (
+                <div key={m.id} className={`grp__chat-msg${cont?' cont':''}`}>
+                  {!cont
+                    ? <div className="grp__chat-av" style={{background:group.color}}>{(m.author||'?')[0].toUpperCase()}</div>
+                    : <div className="grp__chat-av-spacer"/>
+                  }
+                  <div className="grp__chat-body">
+                    {!cont && <div className="grp__chat-meta"><span className="grp__chat-author">{m.author}</span><span className="grp__chat-time">{fmtTime(m.createdAt)}</span></div>}
+                    <p className="grp__chat-text">{m.text}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+        <div ref={bottomRef}/>
+      </div>
+      <div className="grp__chat-input-area">
+        <div className="grp__chat-input-box">
+          <textarea className="grp__chat-input" rows={1} placeholder={`Message #${channel.name}`}
+            value={input} dir="auto"
+            onChange={e=>{setInput(e.target.value);e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px';}}
+            onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}}/>
+          <button className="grp__chat-send" onClick={send} disabled={!input.trim()}
+            style={{background:group.color}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Group meeting detail ───────────────────────────────────────────────────────
+function GroupMeetingDetail({ group, meetingId }) {
+  const local  = (group.meetings||[]).find(m=>m.id===meetingId);
+  const global = (() => { try { return (JSON.parse(localStorage.getItem('mynotion_meetings_v6')||'[]')).find(m=>m.id===meetingId); } catch { return null; } })();
+  const m = local || global;
+
+  if (!m) return <div className="grp__page"><div className="grp__page-body"><p className="grp__empty-msg">Meeting not found.</p></div></div>;
+
+  const PLATFORMS = [{id:'zoom',name:'Zoom'},{id:'meet',name:'Google Meet'},{id:'teams',name:'Teams'},{id:'phone',name:'Phone call'},{id:'person',name:'In Person'}];
+  const pl = PLATFORMS.find(p=>p.id===m.platform)||PLATFORMS[0];
+
+  return (
+    <div className="grp__page">
+      <div className="grp__header" style={{borderColor:group.color+'55'}}>
+        <div className="grp__header-top">
+          <div className="grp__header-av" style={{background:m.color||group.color}}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div className="grp__header-info">
+            <h2 className="grp__header-name">{m.title||'Untitled meeting'}</h2>
+            <div className="grp__header-meta">
+              {m.date && <span>{m.date}{m.time&&` · ${m.time}`}</span>}
+              <span className="grp__header-dot"/>
+              <span>{pl.name}</span>
             </div>
-          ))}
-          {(group.members||[]).length > 8 && (
-            <div className="grp__mb-av grp__mb-more">+{(group.members||[]).length - 8}</div>
+          </div>
+          {m.link && (
+            <a href={m.link} target="_blank" rel="noreferrer" className="grp__header-btn" style={{background:m.color||group.color,color:'#fff',border:'none',textDecoration:'none'}}>
+              Join meeting
+            </a>
           )}
         </div>
-        <span className="grp__mb-count">{(group.members||[]).length} member{(group.members||[]).length !== 1 ? 's' : ''}</span>
+      </div>
+      <div className="grp__page-body">
+        {m.notes && (
+          <div className="grp__section">
+            <div className="grp__section-head">
+              <span className="grp__section-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+              <span className="grp__section-title">Notes</span>
+            </div>
+            <div className="grp__section-body"><p style={{fontSize:14,lineHeight:1.7,color:'var(--text)',margin:0,whiteSpace:'pre-wrap'}}>{m.notes}</p></div>
+          </div>
+        )}
+        {(m.agenda||[]).length > 0 && (
+          <div className="grp__section">
+            <div className="grp__section-head"><span className="grp__section-title">Agenda</span></div>
+            <div className="grp__section-body">
+              {m.agenda.map((a,i) => (
+                <div key={a.id||i} className="grp__event-row">
+                  <div className="grp__event-bar" style={{background:m.color||group.color}}/>
+                  <div className="grp__event-body">
+                    <span className="grp__event-title">{a.topic}</span>
+                    {a.duration && <span className="grp__event-date">{a.duration} min</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {(m.participants||[]).length > 0 && (
+          <div className="grp__section">
+            <div className="grp__section-head"><span className="grp__section-title">Participants</span></div>
+            <div className="grp__section-body">
+              <div className="grp__members-grid">
+                {m.participants.map(p => (
+                  <div key={p.id} className="grp__member-chip">
+                    <div className="grp__member-chip-av" style={{background:m.color||group.color}}>{(p.name||'?')[0].toUpperCase()}</div>
+                    <span className="grp__member-chip-name">{p.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Section wrapper ───────────────────────────────────────────────────────────
+function Section({ icon, title, count, action, children }) {
+  return (
+    <div className="grp__section">
+      <div className="grp__section-head">
+        <span className="grp__section-icon">{icon}</span>
+        <span className="grp__section-title">{title}</span>
+        {count != null && count > 0 && <span className="grp__section-count">{count}</span>}
+        {action && <div className="grp__section-action">{action}</div>}
+      </div>
+      <div className="grp__section-body">{children}</div>
+    </div>
+  );
+}
+
+// ── Redesigned GroupContent ───────────────────────────────────────────────────
+function GroupContent({ group, tab, onUpdate, onAddMember, onRemoveMember }) {
+  const [nameInput, setNameInput] = useState('');
+  const [taskInput, setTaskInput] = useState('');
+  const [projInput, setProjInput] = useState('');
+  const [addingProjCol, setAddingProjCol] = useState(null);
+  const [showWB, setShowWB] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const members  = group.members  || [];
+  const tasks    = group.tasks    || [];
+  const projects = group.projects || [];
+  const meetings = group.meetings || [];
+
+  // Real projects from Projects store linked to this group
+  const realProjects = (() => {
+    try { return (JSON.parse(localStorage.getItem('mynotion_projects_v1')||'[]')).filter(p=>p.groupId===group.id); }
+    catch { return []; }
+  })();
+
+  // Real meetings from MeetingsPage linked to this group
+  const realMeetings = (() => {
+    try {
+      const today = new Date().toISOString().slice(0,10);
+      return (JSON.parse(localStorage.getItem('mynotion_meetings_v6')||'[]'))
+        .filter(m=>m.groupId===group.id && m.date>=today)
+        .sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))
+        .slice(0,6);
+    } catch { return []; }
+  })();
+
+  // calendar events from store
+  const storeEvents = (() => {
+    try { return JSON.parse(localStorage.getItem('mynotion_v3')||'{}').events||[]; }
+    catch { return []; }
+  })();
+  const sharedEvents = storeEvents
+    .filter(e => (e.sharedWith||[]).includes(group.id))
+    .sort((a,b)=>(a.startDate||'').localeCompare(b.startDate||''))
+    .slice(0, 6);
+
+  const upcomingMtgs = meetings
+    .filter(m => !m.done)
+    .sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))
+    .slice(0, 5);
+
+  const openTasks   = tasks.filter(t => !t.done);
+  const doneTasks   = tasks.filter(t => t.done).length;
+  const pct         = tasks.length ? Math.round(doneTasks / tasks.length * 100) : 0;
+
+  const addMember = () => { if (!nameInput.trim()) return; onAddMember(nameInput.trim()); setNameInput(''); };
+  const addTask   = () => {
+    if (!taskInput.trim()) return;
+    onUpdate({ tasks: [...tasks, { id: uuidv4(), text: taskInput.trim(), done: false }] });
+    setTaskInput('');
+  };
+  const toggleTask = id => onUpdate({ tasks: tasks.map(t => t.id===id?{...t,done:!t.done}:t) });
+  const removeTask = id => onUpdate({ tasks: tasks.filter(t => t.id!==id) });
+
+  const addProject = (col) => {
+    if (!projInput.trim()) return;
+    onUpdate({ projects: [...projects, { id: uuidv4(), name: projInput.trim(), col }] });
+    setProjInput(''); setAddingProjCol(null);
+  };
+  const moveProject = (id, col) => onUpdate({ projects: projects.map(p=>p.id===id?{...p,col}:p) });
+  const removeProject = id => onUpdate({ projects: projects.filter(p=>p.id!==id) });
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(group.inviteCode||'');
+    setCopied(true); setTimeout(()=>setCopied(false),2000);
+  };
+
+  return (
+    <div className="grp__page">
+
+      {/* ── Group header banner ── */}
+      <div className="grp__header" style={{ borderColor: group.color+'55' }}>
+        <div className="grp__header-top">
+          <div className="grp__header-av" style={{ background: group.color }}>
+            {group.name[0]?.toUpperCase()}
+          </div>
+          <div className="grp__header-info">
+            <h2 className="grp__header-name">{group.name}</h2>
+            <div className="grp__header-meta">
+              <span>{members.length} member{members.length!==1?'s':''}</span>
+              <span className="grp__header-dot"/>
+              <span>{realProjects.length} project{realProjects.length!==1?'s':''}</span>
+              <span className="grp__header-dot"/>
+              <span>{openTasks.length} open task{openTasks.length!==1?'s':''}</span>
+            </div>
+          </div>
+          <div className="grp__header-actions">
+            <button className="grp__header-btn" onClick={() => setShowWB(true)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l2 2 4-4"/></svg>
+              Whiteboard
+            </button>
+            <button className="grp__header-btn grp__header-btn--code" onClick={copyCode}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              {copied ? 'Copied!' : `Invite: ${group.inviteCode||'—'}`}
+            </button>
+          </div>
+        </div>
+        {/* Member avatars row */}
+        {members.length > 0 && (
+          <div className="grp__header-members">
+            <div className="grp__header-avs">
+              {members.slice(0,12).map(m => (
+                <div key={m.id} className="grp__header-mav" style={{background:group.color}} title={m.name}>
+                  {m.name[0]?.toUpperCase()}
+                </div>
+              ))}
+              {members.length > 12 && (
+                <div className="grp__header-mav grp__header-mav--more">+{members.length-12}</div>
+              )}
+            </div>
+            <div className="grp__header-add-member">
+              <input className="grp__header-name-input" placeholder="Add member…"
+                value={nameInput} onChange={e=>setNameInput(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&addMember()} />
+              <button className="grp__header-add-btn" style={{background:group.color}} onClick={addMember}>+</button>
+            </div>
+          </div>
+        )}
+        {members.length === 0 && (
+          <div className="grp__header-members">
+            <div className="grp__header-add-member">
+              <input className="grp__header-name-input" placeholder="Add first member…"
+                value={nameInput} onChange={e=>setNameInput(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&addMember()} />
+              <button className="grp__header-add-btn" style={{background:group.color}} onClick={addMember}>+</button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* ── Tab content ── */}
-      <div className="grp__tab-content">
-        {tab === 'overview'   && <GroupCalendar    group={group} onUpdate={onUpdate} />}
-        {tab === 'meetings'   && <GroupMeetings    group={group} onUpdate={onUpdate} />}
-        {tab === 'whiteboard' && <GroupWhiteboard  group={group} onUpdate={onUpdate} />}
-        {tab === 'pages'      && <GroupPages       group={group} onUpdate={onUpdate} />}
-        {tab === 'members'    && <GroupMembers     group={group} onUpdate={onUpdate} onAddMember={onAddMember} onRemoveMember={onRemoveMember} />}
+      {/* ── Scrollable body ── */}
+      <div className="grp__page-body">
+
+        {/* ── 1. Projects (from real Projects store) ── */}
+        <Section icon={
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        } title="Projects" count={realProjects.length}>
+          {realProjects.length === 0
+            ? <p className="grp__empty-msg">No projects linked to this group yet. Open a project and set its Group to <strong>{group.name}</strong>.</p>
+            : <div className="grp__proj-list">
+                {realProjects.map(p => {
+                  const STATUSES = [{id:'planning',label:'Planning'},{id:'active',label:'Active'},{id:'on-hold',label:'On Hold'},{id:'completed',label:'Completed'}];
+                  const st = STATUSES.find(s=>s.id===p.status)||STATUSES[0];
+                  return (
+                    <div key={p.id} className="grp__proj-item">
+                      <div className="grp__proj-item-icon" style={{background:p.color+'22',color:p.color}}>
+                        {p.icon||'🗂️'}
+                      </div>
+                      <div className="grp__proj-item-body">
+                        <span className="grp__proj-item-name">{p.name}</span>
+                        {p.description && <span className="grp__proj-item-desc">{p.description}</span>}
+                      </div>
+                      <span className="grp__proj-item-status" style={{color:p.color,background:p.color+'18'}}>
+                        {st.label}
+                      </span>
+                      {p.progress > 0 && (
+                        <div className="grp__proj-item-prog">
+                          <div style={{width:p.progress+'%',background:p.color,height:'100%',borderRadius:2}}/>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+          }
+        </Section>
+
+        {/* ── 3. Upcoming Meetings (from real Meetings store) ── */}
+        <Section icon={
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        } title="Upcoming Meetings" count={realMeetings.length}>
+          {realMeetings.length === 0
+            ? <p className="grp__empty-msg">No upcoming meetings. Open a meeting and set its Group to <strong>{group.name}</strong>.</p>
+            : <div className="grp__events-list">
+                {realMeetings.map(m => {
+                  const PLATFORMS = [{id:'zoom',name:'Zoom'},{id:'meet',name:'Google Meet'},{id:'teams',name:'Teams'},{id:'phone',name:'Phone'},{id:'person',name:'In Person'}];
+                  const pl = PLATFORMS.find(p=>p.id===m.platform)||PLATFORMS[0];
+                  return (
+                    <div key={m.id} className="grp__event-row">
+                      <div className="grp__event-bar" style={{background:m.color||group.color}}/>
+                      <div className="grp__event-body">
+                        <span className="grp__event-title">{m.title||'Untitled meeting'}</span>
+                        <span className="grp__event-date">
+                          {m.date}{m.time&&` · ${m.time}`} · {pl.name}
+                        </span>
+                      </div>
+                      {m.link && (
+                        <a href={m.link} target="_blank" rel="noreferrer" className="grp__event-join" style={{background:m.color||group.color}}>
+                          Join
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+          }
+        </Section>
+
+        {/* ── 4. Tasks ── */}
+        <Section icon={
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        } title="Tasks" count={openTasks.length}
+          action={
+            <div className="grp__add-row">
+              <input className="grp__inline-input" placeholder="Add task…"
+                value={taskInput} onChange={e=>setTaskInput(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&addTask()} />
+              <button className="grp__inline-btn" style={{background:group.color}} onClick={addTask}>Add</button>
+            </div>
+          }>
+          {tasks.length > 0 && (
+            <div className="grp__tasks-progress">
+              <div className="grp__tasks-bar-track">
+                <div className="grp__tasks-bar-fill" style={{width:pct+'%',background:group.color}}/>
+              </div>
+              <span className="grp__tasks-pct">{doneTasks}/{tasks.length} done</span>
+            </div>
+          )}
+          {tasks.length===0
+            ? <p className="grp__empty-msg">No tasks yet. Add one above.</p>
+            : <div className="grp__tasks-list">
+                {tasks.map(t => (
+                  <div key={t.id} className={`grp__task-row${t.done?' done':''}`} onClick={()=>toggleTask(t.id)}>
+                    <div className="grp__task-check" style={t.done?{background:group.color,borderColor:group.color}:{}}>
+                      {t.done&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                    </div>
+                    <span className="grp__task-text">{t.text}</span>
+                    <button className="grp__task-del" onClick={e=>{e.stopPropagation();removeTask(t.id);}}>
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+          }
+        </Section>
+
       </div>
+
+      {/* ── Whiteboard overlay ── */}
+      {showWB && (
+        <div className="grp__wb-overlay">
+          <div className="grp__wb-overlay-head">
+            <span>Whiteboard — {group.name}</span>
+            <button className="grp__wb-overlay-close" onClick={()=>setShowWB(false)}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <GroupWhiteboard group={group} onUpdate={onUpdate}/>
+        </div>
+      )}
     </div>
   );
 }

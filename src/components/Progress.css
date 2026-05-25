@@ -44,8 +44,8 @@
   height: 3px;
 }
 .pstat--streak::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-.pstat--done::before { background: linear-gradient(90deg, #10b981, #6366f1); }
-.pstat--rate::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+.pstat--done::before { background: linear-gradient(90deg, #10b981, #18181b); }
+.pstat--rate::before { background: linear-gradient(90deg, #18181b, #8b5cf6); }
 .pstat--goals::before { background: linear-gradient(90deg, #3b82f6, #ec4899); }
 
 .pstat__icon { font-size: 24px; margin-bottom: 4px; }
@@ -61,7 +61,7 @@
   font-size: 10px;
   font-weight: 700;
   padding: 2px 8px;
-  border-radius: 20px;
+  border-radius: 6px;
 }
 
 .pstat__mini-bar {
@@ -73,7 +73,7 @@
 }
 .pstat__mini-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(90deg, #18181b, #8b5cf6);
   border-radius: 3px;
   transition: width 0.5s ease;
 }
@@ -142,7 +142,7 @@
   transition: height 0.4s ease;
   opacity: 0.7;
 }
-.pcard__bar.today { opacity: 1; background: linear-gradient(to top, #6366f1, #8b5cf6); }
+.pcard__bar.today { opacity: 1; background: linear-gradient(to top, #18181b, #8b5cf6); }
 
 .pcard__bar-count {
   font-size: 11px;

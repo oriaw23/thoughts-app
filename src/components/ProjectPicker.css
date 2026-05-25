@@ -6,7 +6,7 @@
   background: var(--bg-2); font-size: 12px; font-weight: 500; color: var(--text-2);
   cursor: pointer; font-family: inherit; transition: all .13s; white-space: nowrap;
 }
-.pp-btn:hover { border-color: #6366f1; color: #6366f1; background: #eef2ff; }
+.pp-btn:hover { border-color: #18181b; color: #18181b; background: #eef2ff; }
 .pp-btn--linked { border-color: var(--border-2); background: var(--bg); color: var(--text); }
 
 .pp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -19,7 +19,7 @@
 
 .pp-dropdown {
   position: absolute; top: calc(100% + 5px); right: 0;
-  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
   padding: 5px; box-shadow: 0 8px 28px rgba(0,0,0,.14);
   z-index: 300; min-width: 180px; direction: rtl;
 }
@@ -31,8 +31,8 @@
   transition: background .1s;
 }
 .pp-option:hover { background: var(--bg-2); }
-.pp-option.active { font-weight: 600; color: #6366f1; }
+.pp-option.active { font-weight: 600; color: #18181b; }
 .pp-option--remove { color: #ef4444; }
 .pp-option--remove:hover { background: #fee2e2; }
-.pp-check { margin-right: auto; color: #6366f1; font-weight: 700; }
+.pp-check { margin-right: auto; color: #18181b; font-weight: 700; }
 .pp-sep { height: 1px; background: var(--border); margin: 4px 6px; }

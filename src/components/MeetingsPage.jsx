@@ -33,6 +33,7 @@ const blankMeeting = (date, color) => ({
   platform: 'zoom',
   link: '',
   color: color || COLORS[0],
+  groupId: null,
   participants: [],
   agenda: [
     { id: uuidv4(), topic: 'Opening',    duration: 5,  notes: '', attachments: [] },
@@ -392,6 +393,21 @@ Format: ## Summary, ## Key Points, ## Decisions, ## Next Steps. Be concise and p
             ))}
           </div>
         </div>
+
+        {/* Group */}
+        {(() => {
+          const groups = (() => { try { return JSON.parse(localStorage.getItem('mynotion_groups_v1')||'[]'); } catch { return []; } })();
+          if (!groups.length) return null;
+          return (
+            <div className="mtg3__det-group">
+              <label>Group</label>
+              <select value={meeting.groupId||''} onChange={e=>onChange({groupId:e.target.value||null})}>
+                <option value="">No group</option>
+                {groups.map(g=><option key={g.id} value={g.id}>{g.name}</option>)}
+              </select>
+            </div>
+          );
+        })()}
 
         {/* Join row */}
         <div className="mtg3__det-link">
